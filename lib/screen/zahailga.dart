@@ -1,3 +1,7 @@
+import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/brand_list.dart';
+import 'package:lapp/models/getproductname.dart';
+import 'package:lapp/models/product_list.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -5,7 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ZahialgaPage extends StatefulWidget {
-  const ZahialgaPage({super.key});
+  const ZahialgaPage({Key? key}) : super(key: key);
 
   @override
   State<ZahialgaPage> createState() => _ZahialgaPageState();
@@ -18,13 +22,38 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
   final zner = TextEditingController();
   final zgeriinhayg = TextEditingController();
   final zmail = TextEditingController();
-  _zahialah() {
+  List<Brands>? _brandList = [];
+  List<Product>? _prodList = [];
+
+  String? prodId;
+  String? brandId;
+  _zahialah() async {
     if (_formkey1.currentState!.validate()) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => HomePage())));
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("амжилттай захиаллаа")));
+      var map = new Map<String, dynamic>();
+      map['product_id'] = prodId;
+      map['owner_name'] = zner.text;
+      map['owner_phone'] = zdugaar.text;
+      map['owner_address'] = zgeriinhayg.text;
+      map['product_qty'] = btoo.text;
+      var res = await ApiManager.orderCreate(map, context);
+      print("response${res}");
+      // Navigator.push(context, MaterialPageRoute(builder: ((context) => HomePage())));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("амжилттай захиаллаа")));
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getBrands();
+  }
+
+  getBrands() async {
+    var brandRes = await ApiManager.getBrands();
+    _brandList = brandRes.brandList;
+    var prodRes = await ApiManager.getProducts();
+    _prodList = prodRes.productList;
+    setState(() {});
   }
 
   @override
@@ -68,8 +97,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -83,222 +111,236 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('images/back1.jpg'), fit: BoxFit.fill),
+          image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill),
         ),
-        child: SafeArea(
+        child: SingleChildScrollView(
           child: Form(
             key: _formkey1,
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: sizeHeight * 0.05,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // SizedBox(
+                  //   height: sizeHeight * 0.05,
+                  // ),
+                  Text(
+                    "Захиалга",
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: sizeHeight * 0.03,
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 1),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
                     ),
-                    Text(
-                      "Захиалга",
-                      style:
-                          TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 1),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
+                    child: DropdownButtonFormField(
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          label: Text("Бүтээгдэхүүний бренд"),
+                          labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        child: DropdownButtonFormField(
-                            validator: (value) {
-                              if (value == null || value.toString().isEmpty) {
-                                return "            Хоосон байж болохгүй тул талбарыг гүйцээнэ үү!!";
-                              } else {
-                                return null;
-                              }
+                        validator: (value) {
+                          if (value == null || value.toString().isEmpty) {
+                            return "Хоосон байж болохгүй тул талбарыг гүйцээнэ үү!!";
+                          } else {
+                            return null;
+                          }
+                        },
+                        items: _brandList?.map(
+                          (val) {
+                            return DropdownMenuItem<String>(
+                              value: val.id.toString(),
+                              child: Text(val.brand_name ?? ''),
+                            );
+                          },
+                        ).toList(),
+                        onChanged: ((value) {
+                          brandId = value.toString();
+                          setState(() {});
+                        })),
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 1),
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.white,
+                      ),
+                      child: DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            label: Text("Бүтээгдэхүүний нэр"),
+                            labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.toString().isEmpty) {
+                              return "Хоосон байж болохгүй тул талбарыг гүйцээнэ үү!!";
+                            } else {
+                              return null;
+                            }
+                          },
+                          items: _prodList?.map(
+                            (val) {
+                              return DropdownMenuItem<String>(
+                                value: val.id.toString(),
+                                child: Text(val.product_name ?? ''),
+                              );
                             },
-                            items: [
-                              DropdownMenuItem(
-                                value: "1",
-                                child: Text("   Бренд 1"),
-                              ),
-                              DropdownMenuItem(
-                                value: "2",
-                                child: Text("   Бараа бренд 1"),
-                              ),
-                            ],
-                            onChanged: ((value) {})),
+                          ).toList(),
+                          onChanged: ((value) {
+                            prodId = value.toString();
+                            setState(() {});
+                          }))),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: TextFormField(
+                      controller: btoo,
+                      validator: (value) {
+                        if (value == null || value.toString().isEmpty) {
+                          return "Бүтээгдэхүүнийн тоо хоосон байж болохгүй";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: Container(),
+                        border: InputBorder.none,
+                        label: Text("Бүтээгдэхүүний тоо ширхэг"),
+                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      keyboardType: TextInputType.number,
+                      maxLength: 4,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: TextFormField(
+                      controller: zdugaar,
+                      validator: (value) {
+                        if (value == null || value.toString().isEmpty) {
+                          return "            захиалагчийн дугаар хоосон байж болохгүй";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: Container(),
+                        border: InputBorder.none,
+                        label: Text("   Захиалагчийн дугаар"),
+                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      keyboardType: TextInputType.number,
+                      maxLength: 10,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: TextFormField(
+                      controller: zner,
+                      validator: (value) {
+                        if (value == null || value.toString().isEmpty) {
+                          return "            Захиалагчийн нэр хоосон байж болохгүй";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: Container(),
+                        border: InputBorder.none,
+                        label: Text("   Захиалагчийн нэр"),
+                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      keyboardType: TextInputType.name,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: TextFormField(
+                      controller: zmail,
+                      validator: (value) {
+                        if (value == null || value.toString().isEmpty) {
+                          return "            Захиалагчийн майл хаяг хоосон байж болохгүй";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: Container(),
+                        border: InputBorder.none,
+                        label: Text("   Захиалагчийн майл хаяг"),
+                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: TextFormField(
+                      controller: zgeriinhayg,
+                      validator: (value) {
+                        if (value == null || value.toString().isEmpty) {
+                          return "Захиалагчийн гэрийн хаяг хоосон байж болохгүй";
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        counter: Container(),
+                        border: InputBorder.none,
+                        label: Text("Захиалагчийн гэрийн хаяг"),
+                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 1),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: DropdownButtonFormField(
-                            validator: (value) {
-                              if (value == null || value.toString().isEmpty) {
-                                return "            Хоосон байж болохгүй тул талбарыг гүйцээнэ үү!!";
-                              } else {
-                                return null;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: "1",
-                                child: Text("   Бренд 1"),
-                              ),
-                              DropdownMenuItem(
-                                value: "2",
-                                child: Text("   Бараа бренд 1"),
-                              ),
-                            ],
-                            onChanged: ((value) {})),
-                      ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, elevation: 0.0),
+                      onPressed: _zahialah,
+                      child: const Center(
+                          child: Text(
+                        "Захиалах",
+                        style: TextStyle(fontSize: 20, color: Colors.black),
+                      )),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 9),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: btoo,
-                          validator: (value) {
-                            if (value == null || value.toString().isEmpty) {
-                              return "            Бүтээгдэхүүнийн тоо хоосон байж болохгүй";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            label: Text("   Бүтээгдэхүүний тоо ширхэг"),
-                            labelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          keyboardType: TextInputType.number,
-                          maxLength: 4,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 9),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: zdugaar,
-                          validator: (value) {
-                            if (value == null || value.toString().isEmpty) {
-                              return "            захиалагчийн дугаар хоосон байж болохгүй";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            label: Text("   Захиалагчийн дугаар"),
-                            labelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          keyboardType: TextInputType.number,
-                          maxLength: 10,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 9),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: zner,
-                          validator: (value) {
-                            if (value == null || value.toString().isEmpty) {
-                              return "            Захиалагчийн нэр хоосон байж болохгүй";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            label: Text("   Захиалагчийн нэр"),
-                            labelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          keyboardType: TextInputType.name,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 9),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: zmail,
-                          validator: (value) {
-                            if (value == null || value.toString().isEmpty) {
-                              return "            Захиалагчийн майл хаяг хоосон байж болохгүй";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            label: Text("   Захиалагчийн майл хаяг"),
-                            labelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        // padding: EdgeInsets.only(top: 9),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white,
-                        ),
-                        child: TextFormField(
-                          controller: zgeriinhayg,
-                          validator: (value) {
-                            if (value == null || value.toString().isEmpty) {
-                              return "            Захиалагчийн гэрийн хаяг хоосон байж болохгүй";
-                            } else {
-                              return null;
-                            }
-                          },
-                          decoration: InputDecoration(
-                            label: Text("   Захиалагчийн гэрийн хаяг"),
-                            labelStyle: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                        onPressed: _zahialah, child: Text("захиалах"))
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),

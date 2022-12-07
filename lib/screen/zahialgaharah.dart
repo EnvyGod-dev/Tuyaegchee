@@ -7,7 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProductSee extends StatefulWidget {
-  const ProductSee({super.key});
+  const ProductSee({Key? key}) : super(key: key);
 
   @override
   State<ProductSee> createState() => _ProductSeeState();
@@ -29,13 +29,12 @@ class _ProductSeeState extends State<ProductSee> {
     Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-  //       .then((_) {});
-  // }
+  @override
+  void initState() {
+    super.initState();
+    // WidgetsFlutterBinding.ensureInitialized();
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +69,7 @@ class _ProductSeeState extends State<ProductSee> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -121,8 +119,7 @@ class _ProductSeeState extends State<ProductSee> {
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: ElevatedButton(
-                            onPressed: _onsar, child: Text('$dateTime')),
+                        child: ElevatedButton(onPressed: _onsar, child: Text('$dateTime')),
                       ),
                     ),
                   ),

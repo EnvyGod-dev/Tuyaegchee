@@ -1,53 +1,50 @@
-class brandlist {
+import 'dart:convert';
+
+class BrandList {
   String? status;
-  List<Result>? result;
+  List<Brands>? brandList;
 
-  brandlist({this.status, this.result});
+  BrandList({this.status, this.brandList});
 
-  brandlist.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
+  BrandList.fromJson(dynamic json) {
+    status = json["status"];
     if (json['result'] != null) {
-      result = <Result>[];
+      brandList = [];
       json['result'].forEach((v) {
-        result!.add(new Result.fromJson(v));
+        brandList?.add(Brands.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.result != null) {
-      data['result'] = this.result!.map((v) => v.toJson()).toList();
-    }
-    return data;
+    var map = <String, dynamic>{};
+    map["status"] = status;
+    map["result"] = brandList;
+
+    return map;
   }
 }
 
-class Result {
+class Brands {
   int? id;
-  String? brandName;
+  String? brand_name;
   String? type;
-  String? createdAt;
-  String? updatedAt;
+  String? created_at;
+  String? updated_at;
 
-  Result({this.id, this.brandName, this.type, this.createdAt, this.updatedAt});
+  Brands({
+    this.id,
+    this.brand_name,
+    this.type,
+    this.created_at,
+    this.updated_at,
+  });
 
-  Result.fromJson(Map<String, dynamic> json) {
+  Brands.fromJson(dynamic json) {
     id = json['id'];
-    brandName = json['brand_name'];
+    brand_name = json['brand_name'];
     type = json['type'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['brand_name'] = this.brandName;
-    data['type'] = this.type;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
+    created_at = json['created_at'];
+    updated_at = json['updated_at'];
   }
 }

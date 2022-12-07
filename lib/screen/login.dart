@@ -18,42 +18,34 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final loginName = TextEditingController();
   final loginpass = TextEditingController();
-  AjiltanEnum ajiltan = AjiltanEnum.Borluulagch;
+  AjiltanEnum ajiltan = AjiltanEnum.seller;
   Future _loginButton() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        });
-    var map = new Map<String, dynamic>();
-    // map['phone'] = loginName.text;
-    // map['password'] = loginpass.text;
-    // var response = await ApiManager.login(map);
+    
     if (formKey.currentState!.validate()) {
-      if (ajiltan == AjiltanEnum.Borluulagch) {
-        // if (response.role == 'seller') {
+    var map = new Map<String, dynamic>();
+    map['phone'] = loginName.text;
+    map['password'] = loginpass.text;
+    var response = await ApiManager.login(map, context);
+    print("object${response.role}");
+      if (response.role == 'seller') {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: ((context) => HomePage()),
           ),
         );
-      } else {
-        //   ScaffoldMessenger.of(context)
-        //       .showSnackBar(SnackBar(content: Text("Aldaa")));
-        // }
-
-        // if (response.role == "delivery") {
+      } else {if (response.role == AjiltanEnum.seller) 
         Navigator.push(
             context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
-        // } else {
-        // ScaffoldMessenger.of(context)
-        //     .showSnackBar(SnackBar(content: Text("Aldaa")));
-        // }
+       
       }
     }
+  }
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
+    super.initState();
   }
 
   @override
@@ -90,13 +82,14 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Radio(
-                            value: AjiltanEnum.Borluulagch,
+                            value: AjiltanEnum.seller,
                             groupValue: ajiltan,
                             onChanged: ((value) {
                               if (value != null) {
                                 setState(() {
                                   ajiltan = value;
                                 });
+                                print(ajiltan);
                               }
                             })),
                         Text("Борлуулагч",
@@ -110,13 +103,15 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Radio(
-                            value: AjiltanEnum.Hvrgegch,
+                            value: AjiltanEnum.deliver,
                             groupValue: ajiltan,
                             onChanged: ((value) {
                               if (value != null) {
                                 setState(() {
                                   ajiltan = value;
                                 });
+                                print(ajiltan);
+
                               }
                             })),
                         Padding(
@@ -146,13 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                             controller: loginName,
                             validator: (value) {
                               if (value == null || value.toString().isEmpty) {
-                                return "Нэвтрэх нэр Утасны дугаар хоосон байна";
+                                return "Нэвтрэх нэр/Утасны дугаар хоосон байна";
                               } else {
                                 return null;
                               }
                             },
                             decoration: InputDecoration(
-                              label: Text("Нэвтрэх нэр Утасны дугаар"),
+                              border: InputBorder.none,
+
+                              label: Text("Нэвтрэх нэр/Утасны дугаар"),
                               labelStyle: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -186,13 +183,14 @@ class _LoginPageState extends State<LoginPage> {
                               }
                             },
                             decoration: InputDecoration(
+                              border: InputBorder.none,
                               label: Text("Нууц үг"),
                               labelStyle: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            obscureText: true,
+                            obscureText: false,
                           ),
                         ),
                       ),
@@ -200,29 +198,26 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(
                       height: sizeHeight * 0.03,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 112.0),
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(30)),
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                              elevation: MaterialStatePropertyAll(0),
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.white),
-                            ),
-                            onPressed: _loginButton,
-                            child: Text(
-                              "Нэвтрэх",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                      ),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.white),
+                          borderRadius: BorderRadius.circular(30)),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStatePropertyAll(0),
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                          onPressed: _loginButton,
+                          child: Text(
+                            "Нэвтрэх",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold),
+                          )),
                     )
                   ],
                 ),
@@ -235,4 +230,4 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-enum AjiltanEnum { Borluulagch, Hvrgegch }
+enum AjiltanEnum { seller, deliver }

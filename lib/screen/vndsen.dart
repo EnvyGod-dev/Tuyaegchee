@@ -9,13 +9,20 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double sizeWidth = MediaQuery.of(context).size.width;
@@ -96,193 +103,153 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.fill,
           ),
         ),
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 68.0),
-              child: Column(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: sizeWidth * 0.45,
+                  height: sizeHeigth * 0.24,
+                  child: InkWell(
+                    onTap: _zahialga,
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0.0),
+                            child: FaIcon(
+                              FontAwesomeIcons.shoppingCart,
+                              color: Color(0xffED5E92),
+                              size: sizeHeigth * 0.139,
+                            ),
+                          ),
+                          SizedBox(
+                            height: sizeHeigth * 0.01,
+                          ),
+                          const Text(
+                            "Захиалга",
+                            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: sizeHeigth * 0.01,
+                ),
+                SizedBox(
+                  width: sizeWidth * 0.45,
+                  height: sizeHeigth * 0.24,
+                  child: InkWell(
+                    onTap: _hereglegch,
+                    child: Container(
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0.0),
+                            child: FaIcon(
+                              FontAwesomeIcons.person,
+                              color: Color(0xff9BF862),
+                              size: sizeHeigth * 0.139,
+                            ),
+                          ),
+                          SizedBox(
+                            height: sizeHeigth * 0.01,
+                          ),
+                          const Text(
+                            "Хэрэглэгчид",
+                            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: sizeHeigth * 0.02,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 60.0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 90.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: sizeWidth * 0.45,
-                          height: sizeHeigth * 0.24,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                elevation: MaterialStateProperty.all<double>(0),
-                                backgroundColor:
-                                    MaterialStatePropertyAll(Colors.white),
-                                foregroundColor: MaterialStateProperty.all(
-                                  Color(0xffED5E92),
-                                )),
-                            onPressed: _zahialga,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 49.0),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.shoppingCart,
-                                    size: sizeHeigth * 0.139,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: sizeHeigth * 0.01,
-                                ),
-                                Text(
-                                  "Захиалга",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: sizeHeigth * 0.01,
-                        ),
-                        SizedBox(
-                          width: sizeWidth * 0.45,
-                          height: sizeHeigth * 0.24,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              elevation: MaterialStateProperty.all<double>(0),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.white),
-                              foregroundColor: MaterialStateProperty.all(
-                                Color(0xff9BF862),
+                  SizedBox(
+                    width: sizeWidth * 0.45,
+                    height: sizeHeigth * 0.24,
+                    child: InkWell(
+                      onTap: _zahialgaharah,
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 0.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.eyeDropper,
+                                color: Color(0xffD9D5F7),
+                                size: sizeHeigth * 0.139,
                               ),
                             ),
-                            onPressed: _hereglegch,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 49.0),
-                                  child: Icon(
-                                    Icons.person,
-                                    size: sizeHeigth * 0.139,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: sizeHeigth * 0.01,
-                                ),
-                                Text(
-                                  "Хэрэглэгчид",
-                                  style: TextStyle(
-                                    backgroundColor: Colors.white,
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                              height: sizeHeigth * 0.01,
                             ),
-                          ),
+                            const Text(
+                              "Захиалга харах",
+                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            )
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                   SizedBox(
-                    height: sizeHeigth * 0.02,
+                    width: sizeHeigth * 0.01,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 60.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: sizeWidth * 0.45,
-                          height: sizeHeigth * 0.24,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              elevation: MaterialStateProperty.all<double>(0),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.white),
-                              foregroundColor:
-                                  MaterialStateProperty.all(Color(0xffD9D5F7)),
+                  SizedBox(
+                    width: sizeWidth * 0.45,
+                    height: sizeHeigth * 0.24,
+                    child: InkWell(
+                      onTap: _logout,
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 0.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.usersCog,
+                                color: Color(0xffB8D9EC),
+                                size: sizeHeigth * 0.139,
+                              ),
                             ),
-                            onPressed: _zahialgaharah,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 49.0),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.eyeDropper,
-                                    size: sizeHeigth * 0.139,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: sizeHeigth * 0.01,
-                                ),
-                                Text(
-                                  "Захиалга харах",
-                                  style: TextStyle(
-                                    backgroundColor: Colors.white,
-                                    color: Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                              height: sizeHeigth * 0.01,
                             ),
-                          ),
+                            const Text(
+                              "Гарах",
+                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            )
+                          ],
                         ),
-                        SizedBox(
-                          width: sizeHeigth * 0.01,
-                        ),
-                        SizedBox(
-                          width: sizeWidth * 0.45,
-                          height: sizeHeigth * 0.24,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              elevation: MaterialStateProperty.all<double>(0),
-                              backgroundColor:
-                                  MaterialStatePropertyAll(Colors.white),
-                              foregroundColor:
-                                  MaterialStateProperty.all(Color(0xffB8D9EC)),
-                            ),
-                            onPressed: _logout,
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 40.0),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.usersCog,
-                                    size: sizeHeigth * 0.139,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: sizeHeigth * 0.01,
-                                ),
-                                Text(
-                                  "Гарах",
-                                  style: TextStyle(
-                                    backgroundColor: Colors.white,
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
-                  )
+                  ),
                 ],
               ),
-            ),
-          ),
+            )
+          ],
         ),
       ),
     );
