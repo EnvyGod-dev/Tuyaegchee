@@ -1,7 +1,7 @@
 version: "Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)"
-options: "d7b459cdf6365f9a822375a0c7ffa8fe096a6cf2a18c7a3a9b37d6a6a2c0821e"
-build_start_time: [1670328790, 837099075]
-build_end_time: [1670328796, 927949905]
+options: "6029958f53ba7ce04942a75177d5fecdb673fa3fa1a468cc831a8aa1e088be9a"
+build_start_time: [1670437309, 327046871]
+build_end_time: [1670437309, 350050926]
 inputs:
   ? "/Users/9ine6xx/FlutterDev/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_macos-2.0.4/macos/Classes/SharedPreferencesPlugin.swift"
-  : [1670233215, 222688674]
+  : !private [1670233215, 222688674]

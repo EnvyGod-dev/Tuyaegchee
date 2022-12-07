@@ -1,7 +1,9 @@
+import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
 import 'package:lapp/models/brand_list.dart';
 import 'package:lapp/models/getproductname.dart';
 import 'package:lapp/models/product_list.dart';
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -9,13 +11,18 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ZahialgaPage extends StatefulWidget {
-  const ZahialgaPage({Key? key}) : super(key: key);
+  final String? userName;
+  ZahialgaPage({
+    Key? key,
+    this.userName,
+  }) : super(key: key);
 
   @override
   State<ZahialgaPage> createState() => _ZahialgaPageState();
 }
 
 class _ZahialgaPageState extends State<ZahialgaPage> {
+  Userinfo? data = Userinfo();
   final _formkey1 = GlobalKey<FormState>();
   final btoo = TextEditingController();
   final zdugaar = TextEditingController();
@@ -24,6 +31,11 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
   final zmail = TextEditingController();
   List<Brands>? _brandList = [];
   List<Product>? _prodList = [];
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
+  }
 
   String? prodId;
   String? brandId;
@@ -46,6 +58,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
   void initState() {
     super.initState();
     getBrands();
+    _getUserData();
   }
 
   getBrands() async {
@@ -74,7 +87,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 78.0),
                     child: Text(
-                      "tester",
+                      // "tester",
+                      data?.result?.lastName ?? '',
                       // "${widget.userName}",
                       style: TextStyle(
                         backgroundColor: Color.fromARGB(255, 253, 255, 217),
@@ -97,7 +111,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -109,11 +124,12 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
         toolbarHeight: 90,
         backgroundColor: Color.fromARGB(255, 253, 255, 217),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill),
-        ),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/back1.jpg'), fit: BoxFit.fill),
+          ),
           child: Form(
             key: _formkey1,
             child: Padding(
@@ -123,9 +139,12 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   // SizedBox(
                   //   height: sizeHeight * 0.05,
                   // ),
-                  Text(
-                    "Захиалга",
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  SingleChildScrollView(
+                    child: Text(
+                      "Захиалга",
+                      style:
+                          TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(
                     height: sizeHeight * 0.03,
@@ -142,7 +161,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           label: Text("Бүтээгдэхүүний бренд"),
-                          labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          labelStyle: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         validator: (value) {
                           if (value == null || value.toString().isEmpty) {
@@ -176,7 +196,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             label: Text("Бүтээгдэхүүний нэр"),
-                            labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            labelStyle: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           validator: (value) {
                             if (value == null || value.toString().isEmpty) {
@@ -218,7 +239,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         counter: Container(),
                         border: InputBorder.none,
                         label: Text("Бүтээгдэхүүний тоо ширхэг"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       keyboardType: TextInputType.number,
                       maxLength: 4,
@@ -245,7 +267,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         counter: Container(),
                         border: InputBorder.none,
                         label: Text("   Захиалагчийн дугаар"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       keyboardType: TextInputType.number,
                       maxLength: 10,
@@ -272,7 +295,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         counter: Container(),
                         border: InputBorder.none,
                         label: Text("   Захиалагчийн нэр"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       keyboardType: TextInputType.name,
                     ),
@@ -298,7 +322,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         counter: Container(),
                         border: InputBorder.none,
                         label: Text("   Захиалагчийн майл хаяг"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -324,14 +349,19 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         counter: Container(),
                         border: InputBorder.none,
                         label: Text("Захиалагчийн гэрийн хаяг"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        labelStyle: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   Container(
-                    decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30)),
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, elevation: 0.0),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, elevation: 0.0),
                       onPressed: _zahialah,
                       child: const Center(
                           child: Text(

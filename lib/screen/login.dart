@@ -1,3 +1,4 @@
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/jolooch.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:dio/dio.dart';
@@ -8,25 +9,30 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:lapp/api & bloc/api_controller.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final String? userName;
+
+  LoginPage({
+    Key? key,
+    this.userName,
+  }) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Userinfo? data = Userinfo();
   final formKey = GlobalKey<FormState>();
   final loginName = TextEditingController();
   final loginpass = TextEditingController();
   AjiltanEnum ajiltan = AjiltanEnum.seller;
   Future _loginButton() async {
-    
     if (formKey.currentState!.validate()) {
-    var map = new Map<String, dynamic>();
-    map['phone'] = loginName.text;
-    map['password'] = loginpass.text;
-    var response = await ApiManager.login(map, context);
-    print("object${response.role}");
+      var map = new Map<String, dynamic>();
+      map['phone'] = loginName.text;
+      map['password'] = loginpass.text;
+      var response = await ApiManager.login(map, context);
+      print("object${response.role}");
       if (response.role == 'seller') {
         Navigator.push(
           context,
@@ -34,17 +40,22 @@ class _LoginPageState extends State<LoginPage> {
             builder: ((context) => HomePage()),
           ),
         );
-      } else {if (response.role == AjiltanEnum.seller) 
-        Navigator.push(
-            context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
-       
+      } else {
+        if (ajiltan == AjiltanEnum.deliver) {
+          if (response.role == 'delivery') {
+            Navigator.push(context,
+                MaterialPageRoute(builder: ((context) => DeliveryPage())));
+          }
+        }
       }
     }
   }
+
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {});
     super.initState();
   }
 
@@ -111,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                                   ajiltan = value;
                                 });
                                 print(ajiltan);
-
                               }
                             })),
                         Padding(
@@ -148,7 +158,6 @@ class _LoginPageState extends State<LoginPage> {
                             },
                             decoration: InputDecoration(
                               border: InputBorder.none,
-
                               label: Text("Нэвтрэх нэр/Утасны дугаар"),
                               labelStyle: TextStyle(
                                 fontSize: 16,
@@ -190,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            obscureText: false,
+                            obscureText: true,
                           ),
                         ),
                       ),

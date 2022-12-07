@@ -1,3 +1,4 @@
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/login.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +7,21 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../api & bloc/api_controller.dart';
+
 class ProductSee extends StatefulWidget {
-  const ProductSee({Key? key}) : super(key: key);
+  final String? UserName;
+  ProductSee({
+    Key? key,
+    this.UserName,
+  }) : super(key: key);
 
   @override
   State<ProductSee> createState() => _ProductSeeState();
 }
 
 class _ProductSeeState extends State<ProductSee> {
+  Userinfo? data = Userinfo();
   DateTime dateTime = DateTime.now();
 
   void _onsar() {
@@ -25,15 +33,22 @@ class _ProductSeeState extends State<ProductSee> {
     );
   }
 
-  void _onBackButton() {
-    Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));
-  }
-
   @override
   void initState() {
     super.initState();
-    // WidgetsFlutterBinding.ensureInitialized();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
+        .then((_) {});
+    _getUserData();
+  }
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
+  }
+
+  void _onBackButton() {
+    Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
   @override
@@ -48,8 +63,9 @@ class _ProductSeeState extends State<ProductSee> {
               Padding(
                 padding: const EdgeInsets.only(right: 78.0),
                 child: Text(
-                  "tester",
+                  // "tester",
                   // widget.userName,
+                  data?.result?.lastName ?? '',
                   style: TextStyle(
                     backgroundColor: Color.fromARGB(255, 253, 255, 217),
                     color: Colors.black,
@@ -69,7 +85,8 @@ class _ProductSeeState extends State<ProductSee> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -119,7 +136,8 @@ class _ProductSeeState extends State<ProductSee> {
                       padding: const EdgeInsets.all(8.0),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: ElevatedButton(onPressed: _onsar, child: Text('$dateTime')),
+                        child: ElevatedButton(
+                            onPressed: _onsar, child: Text('$dateTime')),
                       ),
                     ),
                   ),

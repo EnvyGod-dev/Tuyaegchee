@@ -1,3 +1,5 @@
+import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/hereglegch.dart';
 import 'package:lapp/screen/login.dart';
 import 'package:lapp/screen/zahailga.dart';
@@ -16,11 +18,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Userinfo? data = Userinfo();
+  @override
   @override
   void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
     super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {});
+    _getUserData();
+  }
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
   }
 
   @override
@@ -67,12 +78,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Test",
-          // data?.result?.lastName ?? '',
+          // "Test",
+          data?.result?.lastName ?? '',
           style: const TextStyle(
             backgroundColor: Color.fromARGB(255, 253, 255, 217),
             color: Colors.black,
-            fontSize: 26,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -116,7 +127,9 @@ class _HomePageState extends State<HomePage> {
                   child: InkWell(
                     onTap: _zahialga,
                     child: Container(
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -133,7 +146,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const Text(
                             "Захиалга",
-                            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -149,7 +165,9 @@ class _HomePageState extends State<HomePage> {
                   child: InkWell(
                     onTap: _hereglegch,
                     child: Container(
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5)),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -166,7 +184,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const Text(
                             "Хэрэглэгчид",
-                            style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
                           )
                         ],
                       ),
@@ -189,7 +210,9 @@ class _HomePageState extends State<HomePage> {
                     child: InkWell(
                       onTap: _zahialgaharah,
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -206,7 +229,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const Text(
                               "Захиалга харах",
-                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
                             )
                           ],
                         ),
@@ -222,7 +248,9 @@ class _HomePageState extends State<HomePage> {
                     child: InkWell(
                       onTap: _logout,
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5)),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -239,7 +267,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const Text(
                               "Гарах",
-                              style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
                             )
                           ],
                         ),

@@ -1,4 +1,6 @@
+import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -7,19 +9,37 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lapp/widgets/text_form_field.dart';
 
 class UserCreate extends StatefulWidget {
-  const UserCreate({Key? key}) : super(key: key);
+  final String? userName;
+  UserCreate({
+    Key? key,
+    this.userName,
+  }) : super(key: key);
 
   @override
   State<UserCreate> createState() => _UserCreateState();
 }
 
 class _UserCreateState extends State<UserCreate> {
+  Userinfo? data = Userinfo();
   bool isValid = true;
   final _formkey = GlobalKey<FormState>();
   final _dugaar = TextEditingController();
   final _ner = TextEditingController();
   final _email = TextEditingController();
   final _gerinhayg = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {});
+    _getUserData();
+  }
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
+  }
 
   _burtgeh() async {
     if (_formkey.currentState!.validate()) {
@@ -55,8 +75,9 @@ class _UserCreateState extends State<UserCreate> {
                   Padding(
                     padding: const EdgeInsets.only(right: 78.0),
                     child: Text(
-                      "tester",
+                      // "tester",
                       // "${widget.userName}",
+                      data?.result?.lastName ?? '',
                       style: TextStyle(
                         backgroundColor: Color.fromARGB(255, 253, 255, 217),
                         color: Colors.black,
@@ -78,7 +99,8 @@ class _UserCreateState extends State<UserCreate> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -92,96 +114,110 @@ class _UserCreateState extends State<UserCreate> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formkey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: sizeHeight * 0.02,
-                ),
-                const Text(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
+        child: Form(
+          key: _formkey,
+          child: Column(
+            children: [
+              SizedBox(
+                height: sizeHeight * 0.02,
+              ),
+              SingleChildScrollView(
+                child: const Text(
                   "Xэрэглэгч бүртгэх",
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 34),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 34),
                 ),
-                SizedBox(
-                  height: sizeHeight * 0.02,
-                ),
-                CustomTextField(
+              ),
+              SizedBox(
+                height: sizeHeight * 0.02,
+              ),
+              SingleChildScrollView(
+                child: CustomTextField(
                   controller: _dugaar,
                   label: 'Утасны дугаар',
                   onChanged: (value) async {
                     if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
+                      var res =
+                          await ApiManager.checkUserValidate(value, context);
                       isValid = res;
                       setState(() {});
                     }
                   },
                 ),
-                isValid == false
-                    ? Text(
-                        "Хэрэглэгч бүртгэлгүй байна",
-                        style: TextStyle(color: Colors.red),
-                      )
-                    : Container(),
-                CustomTextField(
-                  controller: _email,
-                  label: 'Хэрэглэгчийн майл хаяг',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
-                ),
-                CustomTextField(
-                  controller: _ner,
-                  label: 'Хэрэглэгчийн нэр',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
-                ),
-                CustomTextField(
-                  controller: _gerinhayg,
-                  label: 'Хэрэглэгчийн гэрийн хаяг',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
-                ),
-                SizedBox(
-                  height: 60,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                    ),
-                    onPressed: _burtgeh,
-                    child: const Text(
-                      "Бүртгүүлэх",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+              ),
+              isValid == false
+                  ? Text(
+                      "Хэрэглэгч бүртгэлгүй байна",
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : Container(),
+              CustomTextField(
+                controller: _email,
+                label: 'Хэрэглэгчийн майл хаяг',
+                onChanged: (value) async {
+                  if (value.length == 8) {
+                    var res =
+                        await ApiManager.checkUserValidate(value, context);
+                    isValid = res;
+                    setState(() {});
+                  }
+                },
+              ),
+              CustomTextField(
+                controller: _ner,
+                label: 'Хэрэглэгчийн нэр',
+                onChanged: (value) async {
+                  if (value.length == 8) {
+                    var res =
+                        await ApiManager.checkUserValidate(value, context);
+                    isValid = res;
+                    setState(() {});
+                  }
+                },
+              ),
+              CustomTextField(
+                controller: _gerinhayg,
+                label: 'Хэрэглэгчийн гэрийн хаяг',
+                onChanged: (value) async {
+                  if (value.length == 8) {
+                    var res =
+                        await ApiManager.checkUserValidate(value, context);
+                    isValid = res;
+                    setState(() {});
+                  }
+                },
+              ),
+              SizedBox(
+                height: 60,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30)),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    foregroundColor: MaterialStateProperty.all(Colors.black),
+                  ),
+                  onPressed: _burtgeh,
+                  child: const Text(
+                    "Бүртгүүлэх",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
