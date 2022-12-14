@@ -1,15 +1,15 @@
-class orderList {
+class OrderList {
   String? status;
-  List<Result>? result;
+  List<Order>? result;
 
-  orderList({this.status, this.result});
+  OrderList({this.status, this.result});
 
-  orderList.fromJson(Map<String, dynamic> json) {
+  OrderList.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['result'] != null) {
-      result = <Result>[];
+      result = <Order>[];
       json['result'].forEach((v) {
-        result!.add(new Result.fromJson(v));
+        result!.add(Order.fromJson(v));
       });
     }
   }
@@ -24,7 +24,7 @@ class orderList {
   }
 }
 
-class Result {
+class Order {
   int? id;
   int? productId;
   Null? userId;
@@ -35,18 +35,18 @@ class Result {
   String? ownerPhone;
   String? ownerAddress;
   String? orderDate;
-  Null? procurementDate;
-  Null? deliveryDate;
+  String? procurementDate;
+  String? deliveryDate;
   String? orderStatus;
   String? paymentStatus;
   int? orderType;
+  String? comment;
   String? createdAt;
   String? updatedAt;
   Product? product;
   Seller? seller;
   Delivery? delivery;
-
-  Result(
+  Order(
       {this.id,
       this.productId,
       this.userId,
@@ -66,9 +66,10 @@ class Result {
       this.updatedAt,
       this.product,
       this.seller,
+      this.comment,
       this.delivery});
 
-  Result.fromJson(Map<String, dynamic> json) {
+  Order.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     productId = json['product_id'];
     userId = json['user_id'];
@@ -84,15 +85,12 @@ class Result {
     orderStatus = json['order_status'];
     paymentStatus = json['payment_status'];
     orderType = json['order_type'];
+    comment = json['comment'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    product =
-        json['product'] != null ? new Product.fromJson(json['product']) : null;
-    seller =
-        json['seller'] != null ? new Seller.fromJson(json['seller']) : null;
-    delivery = json['delivery'] != null
-        ? new Delivery.fromJson(json['delivery'])
-        : null;
+    product = json['product'] != null ? new Product.fromJson(json['product']) : null;
+    seller = json['seller'] != null ? new Seller.fromJson(json['seller']) : null;
+    delivery = json['delivery'] != null ? new Delivery.fromJson(json['delivery']) : null;
   }
 
   Map<String, dynamic> toJson() {

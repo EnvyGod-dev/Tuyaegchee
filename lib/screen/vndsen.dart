@@ -1,3 +1,4 @@
+import 'package:lapp/api%20&%20bloc/api_controller.dart';
 import 'package:lapp/screen/hereglegch.dart';
 import 'package:lapp/screen/login.dart';
 import 'package:lapp/screen/zahailga.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,11 +19,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var res;
+  String? userName;
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
     super.initState();
+    getUserData();
+  }
+
+  getUserData() async {
+    res = await ApiManager.getUserData();
+    print("res:::${res.result?.firstName}");
+    userName = res.result?.firstName;
+    setState(() {});
   }
 
   @override
@@ -32,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => UserCreate(),
+          builder: (context) => UserCreate(name: userName),
         ),
       );
     }
@@ -41,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductSee(),
+          builder: (context) => ProductSee(name: userName),
         ),
       );
     }
@@ -50,25 +63,30 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ZahialgaPage(),
+          builder: (context) => ZahialgaPage(
+            name: userName,
+          ),
         ),
       );
     }
 
-    _logout() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
+    _logout() async {
+      final SharedPreferences _prefs = await SharedPreferences.getInstance();
+      WarningAlert().showDialog(
+        context: context,
+        text: "Та гарахдаа итгэлтэй байна уу?",
+        button2Text: "Үгүй",
+        button1Text: "Tийм",
+        isNavigate: true,
       );
+      var token = _prefs.clear();
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Test",
-          // data?.result?.lastName ?? '',
+          "${userName}",
+          // ${res.result?.firstName}",
           style: const TextStyle(
             backgroundColor: Color.fromARGB(255, 253, 255, 217),
             color: Colors.black,

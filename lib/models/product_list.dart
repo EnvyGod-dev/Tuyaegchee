@@ -29,16 +29,19 @@ class Product {
   int? id;
   int? category_id;
   String? product_name;
+  int? product_price;
 
   Product({
     this.id,
     this.category_id,
     this.product_name,
+    this.product_price,
   });
 
   Product.fromJson(dynamic json) {
     id = json['id'];
     category_id = json['category_id'];
     product_name = json['product_name'];
+    product_price = json['product_price'];
   }
 }

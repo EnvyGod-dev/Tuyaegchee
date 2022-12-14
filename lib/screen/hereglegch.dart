@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lapp/service/responsive_flutter.dart';
 import 'package:lapp/widgets/text_form_field.dart';
 
 class UserCreate extends StatefulWidget {
-  const UserCreate({Key? key}) : super(key: key);
+  final String? name;
+  const UserCreate({Key? key, this.name}) : super(key: key);
 
   @override
   State<UserCreate> createState() => _UserCreateState();
 }
 
 class _UserCreateState extends State<UserCreate> {
-  bool isValid = true;
+  bool isValid = false;
   final _formkey = GlobalKey<FormState>();
   final _dugaar = TextEditingController();
   final _ner = TextEditingController();
@@ -55,8 +57,7 @@ class _UserCreateState extends State<UserCreate> {
                   Padding(
                     padding: const EdgeInsets.only(right: 78.0),
                     child: Text(
-                      "tester",
-                      // "${widget.userName}",
+                      "${widget.name}",
                       style: TextStyle(
                         backgroundColor: Color.fromARGB(255, 253, 255, 217),
                         color: Colors.black,
@@ -91,6 +92,7 @@ class _UserCreateState extends State<UserCreate> {
         backgroundColor: Color.fromARGB(255, 253, 255, 217),
       ),
       body: Container(
+        height: ResponsiveFlutter.of(context).hp(100),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
         child: SingleChildScrollView(
@@ -113,50 +115,32 @@ class _UserCreateState extends State<UserCreate> {
                   label: 'Утасны дугаар',
                   onChanged: (value) async {
                     if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
+                      var map = new Map<String, dynamic>();
+                      map['phone_number'] = value;
+                      var res = await ApiManager.checkUserValidate(map, context);
                       isValid = res;
+                      print("valid ${res}");
                       setState(() {});
                     }
                   },
                 ),
-                isValid == false
+                isValid == true
                     ? Text(
-                        "Хэрэглэгч бүртгэлгүй байна",
+                        "Хэрэглэгч бүртгэлтэй байна",
                         style: TextStyle(color: Colors.red),
                       )
                     : Container(),
                 CustomTextField(
                   controller: _email,
-                  label: 'Хэрэглэгчийн майл хаяг',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
+                  label: 'Хэрэглэгчийн мейл хаяг',
                 ),
                 CustomTextField(
                   controller: _ner,
                   label: 'Хэрэглэгчийн нэр',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
                 ),
                 CustomTextField(
                   controller: _gerinhayg,
                   label: 'Хэрэглэгчийн гэрийн хаяг',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var res = await ApiManager.checkUserValidate(value, context);
-                      isValid = res;
-                      setState(() {});
-                    }
-                  },
                 ),
                 SizedBox(
                   height: 60,

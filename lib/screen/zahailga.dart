@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lapp/service/responsive_flutter.dart';
 
 class ZahialgaPage extends StatefulWidget {
-  const ZahialgaPage({Key? key}) : super(key: key);
+  final String? name;
+  const ZahialgaPage({Key? key, this.name}) : super(key: key);
 
   @override
   State<ZahialgaPage> createState() => _ZahialgaPageState();
@@ -17,6 +19,7 @@ class ZahialgaPage extends StatefulWidget {
 
 class _ZahialgaPageState extends State<ZahialgaPage> {
   final _formkey1 = GlobalKey<FormState>();
+
   final btoo = TextEditingController();
   final zdugaar = TextEditingController();
   final zner = TextEditingController();
@@ -27,6 +30,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
 
   String? prodId;
   String? brandId;
+
+  var res;
   _zahialah() async {
     if (_formkey1.currentState!.validate()) {
       var map = new Map<String, dynamic>();
@@ -34,6 +39,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
       map['owner_name'] = zner.text;
       map['owner_phone'] = zdugaar.text;
       map['owner_address'] = zgeriinhayg.text;
+      map['email'] = zmail.text;
       map['product_qty'] = btoo.text;
       var res = await ApiManager.orderCreate(map, context);
       print("response${res}");
@@ -42,17 +48,45 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
     }
   }
 
+  checkUserName() async {
+    var map = new Map<String, dynamic>();
+    map['phone_number'] = zdugaar.text;
+    var response = await ApiManager.checkUserName(map, context);
+    print("res:::::::${response.result?.email}");
+    zner.text = "${response.result?.name}";
+    zmail.text = "${response.result?.email}";
+    zgeriinhayg.text = "${response.result?.address}";
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     getBrands();
   }
 
+  checkProdStock() async {
+    var map = new Map<String, dynamic>();
+    map['product_id'] = prodId;
+    map['product_qty'] = btoo.text;
+    var res = await ApiManager.checkProdStock(map, context);
+    print("too ${res}");
+  }
+
+  getProdByBrand() async {
+    var map = new Map<String, dynamic>();
+    map['brand_id'] = brandId;
+    var res = await ApiManager.getProdByBrand(map);
+    _prodList = res.productList;
+    print("heheheh${res}");
+    setState(() {});
+  }
+
   getBrands() async {
     var brandRes = await ApiManager.getBrands();
     _brandList = brandRes.brandList;
-    var prodRes = await ApiManager.getProducts();
-    _prodList = prodRes.productList;
+    // var prodRes = await ApiManager.getProducts();
+    // _prodList = prodRes.productList;
     setState(() {});
   }
 
@@ -74,8 +108,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 78.0),
                     child: Text(
-                      "tester",
-                      // "${widget.userName}",
+                      "${widget.name}",
                       style: TextStyle(
                         backgroundColor: Color.fromARGB(255, 253, 255, 217),
                         color: Colors.black,
@@ -110,6 +143,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
         backgroundColor: Color.fromARGB(255, 253, 255, 217),
       ),
       body: Container(
+        height: ResponsiveFlutter.of(context).hp(100),
         decoration: BoxDecoration(
           image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill),
         ),
@@ -130,6 +164,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   SizedBox(
                     height: sizeHeight * 0.03,
                   ),
+                  // Product brand
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -159,11 +194,13 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                             );
                           },
                         ).toList(),
-                        onChanged: ((value) {
+                        onChanged: ((value) async {
                           brandId = value.toString();
+                          await getProdByBrand();
                           setState(() {});
                         })),
                   ),
+                  // Product
                   Container(
                       margin: EdgeInsets.only(bottom: 10),
                       padding: EdgeInsets.symmetric(horizontal: 20),
@@ -197,6 +234,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                             prodId = value.toString();
                             setState(() {});
                           }))),
+                  // Product Qty
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -206,24 +244,27 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                       color: Colors.white,
                     ),
                     child: TextFormField(
-                      controller: btoo,
-                      validator: (value) {
-                        if (value == null || value.toString().isEmpty) {
-                          return "Бүтээгдэхүүнийн тоо хоосон байж болохгүй";
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        counter: Container(),
-                        border: InputBorder.none,
-                        label: Text("Бүтээгдэхүүний тоо ширхэг"),
-                        labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      keyboardType: TextInputType.number,
-                      maxLength: 4,
-                    ),
+                        controller: btoo,
+                        validator: (value) {
+                          if (value == null || value.toString().isEmpty) {
+                            return "Бүтээгдэхүүнийн тоо хоосон байж болохгүй";
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          counter: Container(),
+                          border: InputBorder.none,
+                          label: Text("Бүтээгдэхүүний тоо ширхэг"),
+                          labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        onEditingComplete: () async {
+                          await checkProdStock();
+                        }),
                   ),
+                  // Phone no
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -236,9 +277,14 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                       controller: zdugaar,
                       validator: (value) {
                         if (value == null || value.toString().isEmpty) {
-                          return "            захиалагчийн дугаар хоосон байж болохгүй";
+                          return "захиалагчийн дугаар хоосон байж болохгүй";
                         } else {
                           return null;
+                        }
+                      },
+                      onChanged: (value) {
+                        if (value.length == 8) {
+                          checkUserName();
                         }
                       },
                       decoration: InputDecoration(
@@ -251,6 +297,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                       maxLength: 10,
                     ),
                   ),
+                  // Name
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -277,6 +324,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                       keyboardType: TextInputType.name,
                     ),
                   ),
+                  // Email
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -328,6 +376,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                       ),
                     ),
                   ),
+                  //Save Button
                   Container(
                     decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
                     child: ElevatedButton(

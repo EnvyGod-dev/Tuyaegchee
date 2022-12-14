@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/order_list.dart';
 import 'package:lapp/screen/login.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
@@ -5,35 +8,64 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lapp/service/responsive_flutter.dart';
 
 class ProductSee extends StatefulWidget {
-  const ProductSee({Key? key}) : super(key: key);
+  final String? name;
+  const ProductSee({Key? key, this.name}) : super(key: key);
 
   @override
   State<ProductSee> createState() => _ProductSeeState();
 }
 
 class _ProductSeeState extends State<ProductSee> {
-  DateTime dateTime = DateTime.now();
+  DateTime? dateTime = DateTime.now();
+  DateTime date = DateTime.now();
 
-  void _onsar() {
-    final date = showDatePicker(
+  List<Order> orderList = [];
+
+  _onsar() async {
+    dateTime = await showDatePicker(
       context: context,
-      initialDate: dateTime,
-      firstDate: DateTime(1800),
+      initialDate: date,
+      firstDate: DateTime(2000),
       lastDate: DateTime(2200),
     );
+    if (dateTime == null) {
+      return;
+    }
+    setState(() {
+      date = dateTime!;
+    });
+    var map = new Map<String, dynamic>();
+    map['order_date'] = DateFormat('yyyy-MM-dd').format(date);
+    var res = await ApiManager.getOrderListByDate(map, context);
+    if (res.status == 'error') {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Тухайн өдөрт захиалга байхгүй байна")));
+    }
+    orderList = res.result!;
+    setState(() {});
   }
 
   void _onBackButton() {
     Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 
+  getOrderList() async {
+    var res = await ApiManager.getOrderList();
+    print("object:::::::${res.result}");
+    orderList = res.result!;
+    print("ene::::${orderList.length}");
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    // WidgetsFlutterBinding.ensureInitialized();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+    getOrderList();
+
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
   }
 
   @override
@@ -48,8 +80,8 @@ class _ProductSeeState extends State<ProductSee> {
               Padding(
                 padding: const EdgeInsets.only(right: 78.0),
                 child: Text(
-                  "tester",
-                  // widget.userName,
+                  "${widget.name}",
+                  // "widget.userName",
                   style: TextStyle(
                     backgroundColor: Color.fromARGB(255, 253, 255, 217),
                     color: Colors.black,
@@ -82,206 +114,178 @@ class _ProductSeeState extends State<ProductSee> {
         backgroundColor: Color.fromARGB(255, 253, 255, 217),
       ),
       body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        height: ResponsiveFlutter.of(context).hp(100),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
               'images/back1.jpg',
             ),
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.fill,
           ),
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 408.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Он сар",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 288.0),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ElevatedButton(
+                    onPressed: _onsar,
                     child: Text(
-                      "Он сар",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      DateFormat('yyyy-MM-dd').format(dateTime!),
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.white)),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 128.0,
-                      top: 10,
-                      left: 10,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: ElevatedButton(onPressed: _onsar, child: Text('$dateTime')),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
+                      columns: <DataColumn>[
+                        DataColumn(
+                          label: Text(
+                            "Б.Бренд",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          columns: <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                "Б.Бренд",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Б.Нэр",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Т/ширхэг",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "Б.үнэ",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "У.Дугаар",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "З.Нэр",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "З.мэйл",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            "З.хаяг",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                      rows: <DataRow>[
+                        for (var order in orderList)
+                          DataRow(
+                            cells: [
+                              DataCell(
+                                Text("${order.product?.brandId}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Б.Нэр",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.product?.productName}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Т/ширхэг",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.productQty}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Б.үнэ",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.product?.productPrice}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "У.Дугаар",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.seller?.phone}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "З.Нэр",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.seller?.firstName}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "З.мэйл",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.seller?.email}"),
                               ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "З.хаяг",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              DataCell(
+                                Text("${order.seller?.address}"),
                               ),
-                            ),
-                          ],
-                          rows: <DataRow>[
-                            DataRow(
-                              cells: [
-                                DataCell(
-                                  Text("Бренд"),
-                                ),
-                                DataCell(
-                                  Text("Нэр"),
-                                ),
-                                DataCell(
-                                  Text("12"),
-                                ),
-                                DataCell(
-                                  Text("120000₮"),
-                                ),
-                                DataCell(
-                                  Text("89111145"),
-                                ),
-                                DataCell(
-                                  Text("Бат"),
-                                ),
-                                DataCell(
-                                  Text("Bat123@gmail.com"),
-                                ),
-                                DataCell(
-                                  Text("БЗФ 26 хороо энканто"),
-                                ),
-                              ],
-                            ),
-                          ]),
-                    ),
-                  ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(5.0),
-                  //   child: Container(
-                  //     padding: EdgeInsets.all(5),
-                  //     decoration: BoxDecoration(
-                  //         color: Colors.white,
-                  //         border: Border.all(color: Colors.white),
-                  //         borderRadius: BorderRadius.circular(20)),
-                  //     child: ElevatedButton(
-                  //       style: ButtonStyle(
-                  //         backgroundColor: MaterialStateProperty.all<Color>(
-                  //             Colors.white),
-                  //         foregroundColor: MaterialStateProperty.all<Color>(
-                  //             Colors.black),
-                  //         elevation: MaterialStateProperty.all<double>(0),
-                  //       ),
-                  //       onPressed: _onBackButton,
-                  //       child: Text(
-                  //         "Буцах",
-                  //         style: TextStyle(
-                  //           fontWeight: FontWeight.bold,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
+                            ],
+                          ),
+                      ]),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
-    Future<DateTime?> pickDate() => showDatePicker(
-          context: context,
-          initialDate: dateTime,
-          firstDate: DateTime(1800),
-          lastDate: DateTime(2200),
-        );
+  }
+
+  _rowTitle({String? text}) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: ResponsiveFlutter.of(context).fontSize(2)),
+      decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black), color: Colors.white),
+      child: Text(
+        text!,
+      ),
+    );
   }
 }

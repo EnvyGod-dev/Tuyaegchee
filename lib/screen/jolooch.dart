@@ -3,10 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/order_list.dart';
 import 'package:lapp/screen/login.dart';
+import 'package:intl/intl.dart';
+import 'package:lapp/service/responsive_flutter.dart';
+import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeliveryPage extends StatefulWidget {
-  const DeliveryPage({super.key});
+  const DeliveryPage({Key? key}) : super(key: key);
 
   @override
   State<DeliveryPage> createState() => _DeliveryPageState();
@@ -14,82 +20,74 @@ class DeliveryPage extends StatefulWidget {
 
 class _DeliveryPageState extends State<DeliveryPage> {
   // Userinfo? data = Userinfo();
-  DateTime dateTime = DateTime.now();
-  final _formkey = GlobalKey<FormState>();
+  DateTime? dateTime = DateTime.now();
+  DateTime date = DateTime.now();
+  final reasonCtrl = TextEditingController();
 
-  void _onsar() {
-    final date = showDatePicker(
+  final _formkey = GlobalKey<FormState>();
+  List<Order> orderList = [];
+  String? status;
+  int? id;
+  String? name;
+
+  _onsar() async {
+    dateTime = await showDatePicker(
       context: context,
-      initialDate: dateTime,
-      firstDate: DateTime(1800),
+      initialDate: date,
+      firstDate: DateTime(2000),
       lastDate: DateTime(2200),
     );
-  }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft])
-  //       .then((_) {});
-
-  //   _getUserData();
-  // }
-
-  // _getUserData() async {
-  //   data = await ApiManager.getUserData();
-  //   setState(() {});
-  // }
-
-  void savebutton() {
-    if (_formkey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Амжилттай Хадгаллаа"),
-        ),
-      );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => DeliveryPage()));
+    if (dateTime == null) {
+      return;
     }
-  }
-
-  void LogOutButton() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
-
-  int _counter = 0;
-
-  void _incrementCounter() {
     setState(() {
-      _counter++;
+      date = dateTime!;
     });
+    var map = new Map<String, dynamic>();
+    map['order_date'] = DateFormat('yyyy-MM-dd').format(date);
+    var res = await ApiManager.getOrderListByDate(map, context);
+    if (res.status == 'error') {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Тухайн өдөрт захиалга байхгүй байна")));
+    }
+    orderList = res.result!;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+
+    getOrderList();
+    _getUserData();
+  }
+
+  _getUserData() async {
+    var data = await ApiManager.getUserData();
+    name = data.result?.firstName;
+    setState(() {});
+  }
+
+  getOrderList() async {
+    var res = await ApiManager.getOrderList();
+    print("object:::::::${res.result}");
+    orderList = res.result!;
+    print("ene::::${orderList.length}");
+    setState(() {});
+  }
+
+  void savebutton() async {
+    var map = new Map<String, dynamic>();
+    map['status'] = status;
+    var res = await ApiManager.paymentStatusChange(map, id!, context);
+    print("res::::${res}");
   }
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setPreferredOrientations(
-    //   [
-    //     DeviceOrientation.landscapeLeft,
-    //     DeviceOrientation.landscapeRight,
-    //     // DeviceOrientation.portraitDown,
-    //     DeviceOrientation.portraitUp,
-    //   ],
-    // );
     return Scaffold(
       appBar: AppBar(
-        // leading: Padding(
-        //     padding: const EdgeInsets.only(top: 28.0, left: 8),
-        //     child: Text(
-        //       data?.result?.firstName ?? '',
-        //       style: const TextStyle(
-        //         backgroundColor: Color.fromARGB(255, 253, 255, 217),
-        //         color: Colors.black,
-        //         fontSize: 26,
-        //         fontWeight: FontWeight.bold,
-        //       ),
-        //     )),
-
         leading: ElevatedButton(
           style: ButtonStyle(
             backgroundColor: MaterialStatePropertyAll<Color>(
@@ -97,9 +95,16 @@ class _DeliveryPageState extends State<DeliveryPage> {
             ),
             elevation: MaterialStatePropertyAll<double>(0),
           ),
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          onPressed: () async {
+            final SharedPreferences _prefs = await SharedPreferences.getInstance();
+            WarningAlert().showDialog(
+              context: context,
+              text: "Та гарахдаа итгэлтэй байна уу?",
+              button2Text: "Үгүй",
+              button1Text: "Tийм",
+              isNavigate: true,
+            );
+            var token = _prefs.clear();
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -107,8 +112,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
           ),
         ),
         title: Text(
-          "Tester",
-          // data?.result?.lastName ?? '',
+          "${name}",
           style: const TextStyle(
             backgroundColor: Color.fromARGB(255, 253, 255, 217),
             color: Colors.black,
@@ -137,203 +141,210 @@ class _DeliveryPageState extends State<DeliveryPage> {
         ],
       ),
       body: Container(
+        height: ResponsiveFlutter.of(context).hp(100),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('images/back1.jpg'), fit: BoxFit.fitWidth),
+          image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fitWidth),
         ),
-        child: SafeArea(
-            child: SingleChildScrollView(
-          child: Center(
-            child: Form(
-              key: _formkey,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 408.0),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formkey,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 408.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Он сар",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 288.0),
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                      onPressed: _onsar,
                       child: Text(
-                        "Он сар",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        DateFormat('yyyy-MM-dd').format(dateTime!),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 128.0,
-                        top: 10,
-                        left: 10,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: ElevatedButton(
-                              onPressed: _onsar, child: Text('$dateTime')),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      child: Center(
-                        child: DataTable(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10),
+                        columns: <DataColumn>[
+                          DataColumn(
+                            label: Text(
+                              "Б.Бренд",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          columns: <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                "З.Огноо",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          DataColumn(
+                            label: Text(
+                              "Б.Нэр",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Х.Огноо",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Т/ширхэг",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Б.Бренд",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Б.үнэ",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Б.Нэр",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "У.Дугаар",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Т/ширхэг",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "З.Нэр",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Б.үнэ",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "З.мэйл",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "У.Дугаар",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "З.хаяг",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "З.Нэр",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "З.Огноо",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "З.мэйл",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Х.Огноо",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "З.хаяг",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Төлбөр",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DataColumn(
-                              label: Text(
-                                "Төлбөр",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              "Тайлбар",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
-                          rows: <DataRow>[
+                          ),
+                        ],
+                        rows: <DataRow>[
+                          for (var order in orderList)
                             DataRow(
                               cells: [
                                 DataCell(
-                                  Text("2022/01/12"),
+                                  Text("${order.product?.brandId}"),
                                 ),
                                 DataCell(
-                                  Text("2022/01/13"),
+                                  Text("${order.product?.productName}"),
                                 ),
                                 DataCell(
-                                  Text("Бренд"),
+                                  Text("${order.productQty}"),
                                 ),
                                 DataCell(
-                                  Text("Нэр"),
+                                  Text("${order.product?.productPrice}"),
                                 ),
                                 DataCell(
-                                  Text("12"),
+                                  Text("${order.seller?.phone}"),
                                 ),
                                 DataCell(
-                                  Text("120000₮"),
+                                  Text("${order.seller?.firstName}"),
                                 ),
                                 DataCell(
-                                  Text("89111145"),
+                                  Text("${order.seller?.email}"),
                                 ),
                                 DataCell(
-                                  Text("Бат"),
+                                  Text("${order.seller?.address}"),
                                 ),
                                 DataCell(
-                                  Text("Bat123@gmail.com"),
+                                  Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),
                                 ),
                                 DataCell(
-                                  Text("БЗФ 26 хороо энканто"),
+                                  order.deliveryDate != null
+                                      ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.deliveryDate!)))
+                                      : Text(''),
                                 ),
                                 DataCell(DropdownButtonFormField(
                                     validator: (value) {
-                                      if (value == null ||
-                                          value.toString().isEmpty) {
+                                      if (value == null || value.toString().isEmpty) {
                                         return "Хоосон байж болохгүй";
                                       }
                                       return null;
                                     },
+                                    decoration: InputDecoration(border: InputBorder.none),
                                     icon: Icon(
                                       Icons.arrow_drop_down,
                                       size: 35,
@@ -341,105 +352,145 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     ),
                                     dropdownColor: Colors.white,
                                     isExpanded: true,
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                    hint: Text("Төлбөр"),
+                                    style: TextStyle(color: Colors.black, fontSize: 16),
+                                    hint: Text(order.paymentStatus ?? "Төлбөр"),
                                     items: [
                                       DropdownMenuItem(
-                                        value: "1",
+                                        value: "Бэлэн",
                                         child: Text("Бэлэн"),
                                       ),
                                       DropdownMenuItem(
-                                        value: "2",
+                                        value: "Данс",
                                         child: Text("Данс"),
                                       ),
                                       DropdownMenuItem(
-                                        value: "3",
-                                        child: Text("Карт"),
+                                        value: 'Хойшлуулсан',
+                                        child: Text("Хойшлуулсан"),
                                       ),
                                       DropdownMenuItem(
-                                        value: '4',
-                                        child: Text("Хойшлогдсон"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: '5',
-                                        child: Text("Цуцалсан"),
+                                        value: 'Цуцлагдсан',
+                                        child: Text("Цуцлагдсан"),
                                       )
                                     ],
-                                    onChanged: (value) {}))
+                                    onChanged: (value) {
+                                      status = value.toString();
+                                      id = order.id;
+                                      setState(() {});
+                                      if (status == 'Хойшлуулсан') {
+                                        print("object");
+                                        _addComment(id: id);
+                                      }
+                                    })),
+                                DataCell(
+                                  Text(order.comment != null ? "${order.comment}" : ""),
+                                ),
                               ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            decoration: BoxDecoration(
+                            ),
+                        ]),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
                               color: Colors.white,
-                              border: Border.all(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(30),
                             ),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                elevation: MaterialStateProperty.all(0),
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.white),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.black),
-                              ),
-                              onPressed: savebutton,
-                              child: Text("Хадгалах"),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              elevation: MaterialStateProperty.all(0),
+                              backgroundColor: MaterialStateProperty.all(Colors.white),
+                              foregroundColor: MaterialStateProperty.all(Colors.black),
                             ),
+                            onPressed: savebutton,
+                            child: Text("Хадгалах"),
                           ),
                         ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Container(
-                        //     padding: EdgeInsets.only(left: 10, right: 10),
-                        //     decoration: BoxDecoration(
-                        //         color: Colors.white,
-                        //         border: Border.all(color: Colors.white),
-                        //         borderRadius: BorderRadius.circular(30)),
-                        //     child: ElevatedButton(
-                        //       style: ButtonStyle(
-                        //         elevation: MaterialStateProperty.all(0),
-                        //         backgroundColor:
-                        //             MaterialStateProperty.all(Colors.white),
-                        //         foregroundColor:
-                        //             MaterialStateProperty.all(Colors.black),
-                        //       ),
-                        //       onPressed: LogOutButton,
-                        //       child: Text("Гарах"),
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-        )),
+        ),
       ),
     );
   }
 
-  Future<DateTime?> pickDate() => showDatePicker(
-        context: context,
-        initialDate: dateTime,
-        firstDate: DateTime(1800),
-        lastDate: DateTime(2200),
-      );
+  _addComment({int? id}) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Хойшлогдсон шалтгаанаа оруулна уу",
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: reasonCtrl,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0.0,
+                      backgroundColor: Colors.transparent,
+                    ),
+                    child: Text(
+                      'Хадгалах',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    onPressed: () async {
+                      var map = new Map<String, dynamic>();
+
+                      map['order_id'] = id.toString();
+                      map['comment'] = reasonCtrl.text;
+
+                      var res = await ApiManager.addReasonDelayed(map, context);
+                      if (res['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Амжилттай"), backgroundColor: Colors.green));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Амжилтгүй")));
+                      }
+                      Navigator.pop(context);
+                      initState();
+                    },
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0.0,
+                        backgroundColor: Colors.transparent,
+                      ),
+                      child: const Text(
+                        'Цуцлах',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      })
+                ],
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
 }
