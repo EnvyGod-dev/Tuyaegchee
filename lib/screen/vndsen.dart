@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(
             backgroundColor: Color.fromARGB(255, 253, 255, 217),
             color: Colors.black,
-            fontSize: 26,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),

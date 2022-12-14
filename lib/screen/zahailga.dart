@@ -1,7 +1,9 @@
+import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
 import 'package:lapp/models/brand_list.dart';
 import 'package:lapp/models/getproductname.dart';
 import 'package:lapp/models/product_list.dart';
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -18,6 +20,7 @@ class ZahialgaPage extends StatefulWidget {
 }
 
 class _ZahialgaPageState extends State<ZahialgaPage> {
+  Userinfo? data = Userinfo();
   final _formkey1 = GlobalKey<FormState>();
 
   final btoo = TextEditingController();
@@ -27,6 +30,11 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
   final zmail = TextEditingController();
   List<Brands>? _brandList = [];
   List<Product>? _prodList = [];
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
+  }
 
   String? prodId;
   String? brandId;
@@ -157,9 +165,11 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   // SizedBox(
                   //   height: sizeHeight * 0.05,
                   // ),
-                  Text(
-                    "Захиалга",
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  SingleChildScrollView(
+                    child: Text(
+                      "Захиалга",
+                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(
                     height: sizeHeight * 0.03,

@@ -1,4 +1,6 @@
+import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -22,6 +24,19 @@ class _UserCreateState extends State<UserCreate> {
   final _ner = TextEditingController();
   final _email = TextEditingController();
   final _gerinhayg = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {});
+    _getUserData();
+  }
+
+  _getUserData() async {
+    data = await ApiManager.getUserData();
+    setState(() {});
+  }
 
   _burtgeh() async {
     if (_formkey.currentState!.validate()) {
@@ -79,7 +94,8 @@ class _UserCreateState extends State<UserCreate> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -94,23 +110,30 @@ class _UserCreateState extends State<UserCreate> {
       body: Container(
         height: ResponsiveFlutter.of(context).hp(100),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formkey,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: sizeHeight * 0.02,
-                ),
-                const Text(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
+        child: Form(
+          key: _formkey,
+          child: Column(
+            children: [
+              SizedBox(
+                height: sizeHeight * 0.02,
+              ),
+              SingleChildScrollView(
+                child: const Text(
                   "Xэрэглэгч бүртгэх",
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 34),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 34),
                 ),
-                SizedBox(
-                  height: sizeHeight * 0.02,
-                ),
-                CustomTextField(
+              ),
+              SizedBox(
+                height: sizeHeight * 0.02,
+              ),
+              SingleChildScrollView(
+                child: CustomTextField(
                   controller: _dugaar,
                   label: 'Утасны дугаар',
                   onChanged: (value) async {

@@ -1,3 +1,4 @@
+import 'package:lapp/models/userInfo.dart';
 import 'package:lapp/screen/jolooch.dart';
 import 'package:lapp/screen/vndsen.dart';
 import 'package:dio/dio.dart';
@@ -17,6 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Userinfo? data = Userinfo();
   final formKey = GlobalKey<FormState>();
   final loginName = TextEditingController();
   final loginpass = TextEditingController();

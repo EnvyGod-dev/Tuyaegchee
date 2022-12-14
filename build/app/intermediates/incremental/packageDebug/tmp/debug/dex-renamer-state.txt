@@ -1,0 +1,4 @@
+#Thu Dec 08 03:14:27 ULAT 2022
+base.0=/Users/9ine6xx/app/Tuyaegchee/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
