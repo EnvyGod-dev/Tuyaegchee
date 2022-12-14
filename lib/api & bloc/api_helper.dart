@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiHelper {
-  static const String BaseUrl = "http://10.5.33.173";
+  static const String BaseUrl = "http://202.70.34.26";
 }
 
 class HttpMethod {

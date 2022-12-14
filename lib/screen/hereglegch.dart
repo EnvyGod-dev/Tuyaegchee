@@ -28,13 +28,12 @@ class _UserCreateState extends State<UserCreate> {
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-        .then((_) {});
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
     _getUserData();
   }
 
   _getUserData() async {
-    data = await ApiManager.getUserData();
+    var data = await ApiManager.getUserData();
     setState(() {});
   }
 
@@ -94,8 +93,7 @@ class _UserCreateState extends State<UserCreate> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -110,9 +108,7 @@ class _UserCreateState extends State<UserCreate> {
       body: Container(
         height: ResponsiveFlutter.of(context).hp(100),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
+        decoration: BoxDecoration(image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fill)),
         child: Form(
           key: _formkey,
           child: Column(
@@ -120,75 +116,68 @@ class _UserCreateState extends State<UserCreate> {
               SizedBox(
                 height: sizeHeight * 0.02,
               ),
-              SingleChildScrollView(
-                child: const Text(
-                  "Xэрэглэгч бүртгэх",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 34),
-                ),
+              const Text(
+                "Xэрэглэгч бүртгэх",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 34),
               ),
               SizedBox(
                 height: sizeHeight * 0.02,
               ),
-              SingleChildScrollView(
-                child: CustomTextField(
-                  controller: _dugaar,
-                  label: 'Утасны дугаар',
-                  onChanged: (value) async {
-                    if (value.length == 8) {
-                      var map = new Map<String, dynamic>();
-                      map['phone_number'] = value;
-                      var res = await ApiManager.checkUserValidate(map, context);
-                      isValid = res;
-                      print("valid ${res}");
-                      setState(() {});
-                    }
-                  },
-                ),
-                isValid == true
-                    ? Text(
-                        "Хэрэглэгч бүртгэлтэй байна",
-                        style: TextStyle(color: Colors.red),
-                      )
-                    : Container(),
-                CustomTextField(
-                  controller: _email,
-                  label: 'Хэрэглэгчийн мейл хаяг',
-                ),
-                CustomTextField(
-                  controller: _ner,
-                  label: 'Хэрэглэгчийн нэр',
-                ),
-                CustomTextField(
-                  controller: _gerinhayg,
-                  label: 'Хэрэглэгчийн гэрийн хаяг',
-                ),
-                SizedBox(
-                  height: 60,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                    ),
-                    onPressed: _burtgeh,
-                    child: const Text(
-                      "Бүртгүүлэх",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+              CustomTextField(
+                controller: _dugaar,
+                label: 'Утасны дугаар',
+                onChanged: (value) async {
+                  if (value.length == 8) {
+                    var map = new Map<String, dynamic>();
+                    map['phone_number'] = value;
+                    var res = await ApiManager.checkUserValidate(map, context);
+                    isValid = res;
+                    print("valid ${res}");
+                    setState(() {});
+                  }
+                },
+              ),
+              isValid == true
+                  ? Text(
+                      "Хэрэглэгч бүртгэлтэй байна",
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : Container(),
+              CustomTextField(
+                controller: _email,
+                label: 'Хэрэглэгчийн мейл хаяг',
+              ),
+              CustomTextField(
+                controller: _ner,
+                label: 'Хэрэглэгчийн нэр',
+              ),
+              CustomTextField(
+                controller: _gerinhayg,
+                label: 'Хэрэглэгчийн гэрийн хаяг',
+              ),
+              SizedBox(
+                height: 60,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    foregroundColor: MaterialStateProperty.all(Colors.black),
+                  ),
+                  onPressed: _burtgeh,
+                  child: const Text(
+                    "Бүртгүүлэх",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
