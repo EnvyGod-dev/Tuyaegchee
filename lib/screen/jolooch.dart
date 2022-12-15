@@ -57,7 +57,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
 
     getOrderList();
     _getUserData();
@@ -65,7 +65,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
 
   _getUserData() async {
     var data = await ApiManager.getUserData();
-    name = data.result?.firstName;
+    name = data.result?.name;
     setState(() {});
   }
 
@@ -230,7 +230,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                           ),
                           DataColumn(
                             label: Text(
-                              "У.Дугаар",
+                              "З.Дугаар",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -300,6 +300,15 @@ class _DeliveryPageState extends State<DeliveryPage> {
                               ),
                             ),
                           ),
+                          DataColumn(
+                            label: Text(
+                              "Үйлдэл",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ],
                         rows: <DataRow>[
                           for (var order in orderList)
@@ -321,7 +330,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                   Text("${order.seller?.phone}"),
                                 ),
                                 DataCell(
-                                  Text("${order.seller?.firstName}"),
+                                  Text("${order.seller?.name}"),
                                 ),
                                 DataCell(
                                   Text("${order.seller?.email}"),
@@ -353,7 +362,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     dropdownColor: Colors.white,
                                     isExpanded: true,
                                     style: TextStyle(color: Colors.black, fontSize: 16),
-                                    hint: Text(order.paymentStatus ?? "Төлбөр"),
+                                    hint: Text(order.paymentStatus ?? "..."),
                                     items: [
                                       DropdownMenuItem(
                                         value: "Бэлэн",
@@ -384,39 +393,23 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                 DataCell(
                                   Text(order.comment != null ? "${order.comment}" : ""),
                                 ),
+                                DataCell(
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                      elevation: MaterialStateProperty.all(0),
+                                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                                      foregroundColor: MaterialStateProperty.all(Colors.black),
+                                    ),
+                                    onPressed: savebutton,
+                                    child: Text(
+                                      "Хадгалах",
+                                      style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                         ]),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              elevation: MaterialStateProperty.all(0),
-                              backgroundColor: MaterialStateProperty.all(Colors.white),
-                              foregroundColor: MaterialStateProperty.all(Colors.black),
-                            ),
-                            onPressed: savebutton,
-                            child: Text("Хадгалах"),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 15,
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -447,6 +440,9 @@ class _DeliveryPageState extends State<DeliveryPage> {
                 children: [
                   TextField(
                     controller: reasonCtrl,
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
 
   getUserData() async {
     res = await ApiManager.getUserData();
-    print("res:::${res.result?.firstName}");
-    userName = res.result?.firstName;
+    print("res:::${res.result?.name}");
+    userName = res.result?.name;
     setState(() {});
   }
 

@@ -204,7 +204,7 @@ class _ProductSeeState extends State<ProductSee> {
                         ),
                         DataColumn(
                           label: Text(
-                            "У.Дугаар",
+                            "З.Дугаар",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -259,7 +259,7 @@ class _ProductSeeState extends State<ProductSee> {
                                 Text("${order.seller?.phone}"),
                               ),
                               DataCell(
-                                Text("${order.seller?.firstName}"),
+                                Text("${order.seller?.name}"),
                               ),
                               DataCell(
                                 Text("${order.seller?.email}"),

@@ -17,7 +17,10 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+enum Role { delivery, seller }
+
 class _LoginPageState extends State<LoginPage> {
+  Role? _role = Role.delivery;
   Userinfo? data = Userinfo();
   final formKey = GlobalKey<FormState>();
   final loginName = TextEditingController();
@@ -33,19 +36,19 @@ class _LoginPageState extends State<LoginPage> {
       map['phone'] = loginName.text;
       map['password'] = loginpass.text;
       var response = await ApiManager.login(map, context);
-      print("object${response.role}");
       if (isSeller) {
         if (response.role == 'seller' && isSeller) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: ((context) => DeliveryPage()),
+              builder: ((context) => HomePage()),
             ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
       }
+
       if (isDel) {
         if (response.role == 'delivery') {
           Navigator.push(context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
@@ -95,13 +98,67 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        _isSeller(
-                          text: "Борлуулагч",
-                          value: 'seller',
+                        Row(
+                          children: [
+                            Radio<Role>(
+                              value: Role.seller,
+                              groupValue: _role,
+                              onChanged: (Role? value) {
+                                setState(() {
+                                  _role = value;
+                                  print("role:::${_role}");
+                                  if (value == Role.seller) {
+                                    isSeller = true;
+                                  }
+                                  if (isDel) {
+                                    isDel = false;
+                                  }
+                                  print("seller:::${isSeller}");
+                                });
+                              },
+                            ),
+                            Text(
+                              "Борлуулагч",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
                         ),
-                        _isDeliver(
-                          text: "Жолооч",
-                          value: 'deliver',
+                        Row(
+                          children: [
+                            Radio<Role>(
+                              value: Role.delivery,
+                              groupValue: _role,
+                              onChanged: (Role? value) {
+                                setState(() {
+                                  _role = value;
+                                  if (isSeller) {
+                                    isSeller = false;
+                                  }
+                                  if (value == Role.delivery) {
+                                    isDel = true;
+                                  }
+                                  isDel = true;
+                                  print("role:::${isSeller}");
+
+                                  print("role:::${isDel}");
+                                });
+                              },
+                            ),
+                            Text(
+                              "Жолооч",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
                         )
                       ],
                     ),

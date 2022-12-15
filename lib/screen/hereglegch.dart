@@ -143,6 +143,11 @@ class _UserCreateState extends State<UserCreate> {
                       style: TextStyle(color: Colors.red),
                     )
                   : Container(),
+              isValid == true
+                  ? SizedBox(
+                      height: 10,
+                    )
+                  : Container(),
               CustomTextField(
                 controller: _email,
                 label: 'Хэрэглэгчийн мейл хаяг',

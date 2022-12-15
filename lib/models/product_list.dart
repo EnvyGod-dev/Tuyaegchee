@@ -30,12 +30,14 @@ class Product {
   int? category_id;
   String? product_name;
   int? product_price;
+  int? product_qty;
 
   Product({
     this.id,
     this.category_id,
     this.product_name,
     this.product_price,
+    this.product_qty,
   });
 
   Product.fromJson(dynamic json) {
@@ -43,5 +45,6 @@ class Product {
     category_id = json['category_id'];
     product_name = json['product_name'];
     product_price = json['product_price'];
+    product_qty = json['product_qty'];
   }
 }

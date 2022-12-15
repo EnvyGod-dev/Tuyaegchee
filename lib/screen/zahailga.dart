@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
 import 'package:lapp/models/brand_list.dart';
@@ -38,6 +40,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
 
   String? prodId;
   String? brandId;
+  int? prodQty;
+  int? price;
 
   var res;
   _zahialah() async {
@@ -49,6 +53,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
       map['owner_address'] = zgeriinhayg.text;
       map['email'] = zmail.text;
       map['product_qty'] = btoo.text;
+      map['product_price'] = (price! * int.parse(btoo.text)).toString();
+      print("request::::${map}");
       var res = await ApiManager.orderCreate(map, context);
       print("response${res}");
       // Navigator.push(context, MaterialPageRoute(builder: ((context) => HomePage())));
@@ -102,7 +108,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
   Widget build(BuildContext context) {
     double sizeWidth = MediaQuery.of(context).size.width;
     double sizeHeight = MediaQuery.of(context).size.height;
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -165,11 +171,9 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   // SizedBox(
                   //   height: sizeHeight * 0.05,
                   // ),
-                  SingleChildScrollView(
-                    child: Text(
-                      "Захиалга",
-                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-                    ),
+                  Text(
+                    "Захиалга",
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: sizeHeight * 0.03,
@@ -237,6 +241,11 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                               return DropdownMenuItem<String>(
                                 value: val.id.toString(),
                                 child: Text(val.product_name ?? ''),
+                                onTap: () {
+                                  prodQty = val.product_qty;
+                                  price = val.product_price;
+                                  setState(() {});
+                                },
                               );
                             },
                           ).toList(),
@@ -274,6 +283,24 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                           await checkProdStock();
                         }),
                   ),
+                  prodQty != null
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Боломжит үлдэгдэл: ${prodQty}",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  prodQty != null
+                      ? SizedBox(
+                          height: 10,
+                        )
+                      : Container(),
+
                   // Phone no
                   Container(
                     margin: EdgeInsets.only(bottom: 10),
@@ -388,7 +415,13 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                   ),
                   //Save Button
                   Container(
-                    decoration: BoxDecoration(border: Border.all(color: Colors.white), color: Colors.white, borderRadius: BorderRadius.circular(30)),
+                    margin: EdgeInsets.symmetric(horizontal: 60, vertical: 30),
+                    height: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent, elevation: 0.0),
                       onPressed: _zahialah,
