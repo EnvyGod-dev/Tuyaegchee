@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lapp">
+    package="com.baekseol.lapp">
    <application
         android:label="lapp"
         android:name="${applicationName}"
