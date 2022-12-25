@@ -1,4 +1,0 @@
-#Wed Dec 21 01:23:16 ULAT 2022
-base.0=/Users/munkhbat/Desktop/Tuyaegchee/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex

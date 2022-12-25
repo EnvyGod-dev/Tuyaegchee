@@ -5,7 +5,13 @@ import 'package:lapp/screen/login.dart';
 class WarningAlert {
   late int year;
   void showDialog(
-      {required BuildContext context, String text = '', String? button2Text, String? button1Text, bool isNavigate = false, String? routeName}) {
+      {required BuildContext context,
+      String text = '',
+      String? button2Text,
+      String? button1Text,
+      bool isNavigate = false,
+      String? routeName,
+      Function()? onPressed}) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -28,9 +34,10 @@ class WarningAlert {
                 button2Text ?? 'Болсон',
                 style: TextStyle(color: Colors.black),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: onPressed ??
+                  () {
+                    Navigator.of(context).pop();
+                  },
             ),
             isNavigate
                 ? ElevatedButton(

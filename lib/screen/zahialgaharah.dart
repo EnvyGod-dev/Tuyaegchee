@@ -259,13 +259,13 @@ class _ProductSeeState extends State<ProductSee> {
                                 Text("${order.seller?.phone}"),
                               ),
                               DataCell(
-                                Text("${order.seller?.name}"),
+                                Text("${order.ownerName}"),
                               ),
                               DataCell(
-                                Text("${order.seller?.email}"),
+                                Text("${order.ownerEmail}"),
                               ),
                               DataCell(
-                                Text("${order.seller?.address}"),
+                                Text("${order.ownerAddress}"),
                               ),
                             ],
                           ),

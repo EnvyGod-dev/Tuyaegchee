@@ -27,13 +27,14 @@ class OrderList {
 class Order {
   int? id;
   int? productId;
-  Null? userId;
+  int? userId;
   int? deliverId;
   int? sellerId;
   int? productQty;
   String? ownerName;
   String? ownerPhone;
   String? ownerAddress;
+  String? ownerEmail;
   String? orderDate;
   String? procurementDate;
   String? deliveryDate;
@@ -55,6 +56,7 @@ class Order {
       this.productQty,
       this.ownerName,
       this.ownerPhone,
+      this.ownerEmail,
       this.ownerAddress,
       this.orderDate,
       this.procurementDate,
@@ -78,6 +80,7 @@ class Order {
     productQty = json['product_qty'];
     ownerName = json['owner_name'];
     ownerPhone = json['owner_phone'];
+    ownerEmail = json['owner_email'];
     ownerAddress = json['owner_address'];
     orderDate = json['order_date'];
     procurementDate = json['procurement_date'];

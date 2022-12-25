@@ -330,13 +330,13 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                   Text("${order.seller?.phone}"),
                                 ),
                                 DataCell(
-                                  Text("${order.seller?.name}"),
+                                  Text("${order.ownerName}"),
                                 ),
                                 DataCell(
-                                  Text("${order.seller?.email}"),
+                                  Text("${order.ownerEmail}"),
                                 ),
                                 DataCell(
-                                  Text("${order.seller?.address}"),
+                                  Text("${order.ownerAddress}"),
                                 ),
                                 DataCell(
                                   Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),

@@ -36,25 +36,23 @@ class _LoginPageState extends State<LoginPage> {
       map['phone'] = loginName.text;
       map['password'] = loginpass.text;
       var response = await ApiManager.login(map, context);
-      if (isSeller) {
-        if (response.role == 'seller' && isSeller) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: ((context) => HomePage()),
-            ),
-          );
-        }
-      } else {
+      if (response.role == 'seller' && isSeller) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: ((context) => HomePage()),
+          ),
+        );
+      } else if (isSeller == false || isDel == true) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
       }
 
-      if (isDel) {
+      if (isDel && isSeller == false) {
         if (response.role == 'delivery') {
           Navigator.push(context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
+        } else if (isDel == false || isSeller == true) {
+          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
       }
     }
   }
