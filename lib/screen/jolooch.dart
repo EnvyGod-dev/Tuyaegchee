@@ -57,7 +57,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
 
     getOrderList();
     _getUserData();
@@ -82,6 +82,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
     map['status'] = status;
     var res = await ApiManager.paymentStatusChange(map, id!, context);
     print("res::::${res}");
+    getOrderList();
   }
 
   @override
@@ -342,70 +343,74 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                   Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),
                                 ),
                                 DataCell(
-                                  order.deliveryDate != null
-                                      ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.deliveryDate!)))
+                                  order.delivered_date != null
+                                      ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.delivered_date!)))
                                       : Text(''),
                                 ),
-                                DataCell(DropdownButtonFormField(
-                                    validator: (value) {
-                                      if (value == null || value.toString().isEmpty) {
-                                        return "Хоосон байж болохгүй";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(border: InputBorder.none),
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      size: 35,
-                                      color: Colors.black,
-                                    ),
-                                    dropdownColor: Colors.white,
-                                    isExpanded: true,
-                                    style: TextStyle(color: Colors.black, fontSize: 16),
-                                    hint: Text(order.paymentStatus ?? "..."),
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: "Бэлэн",
-                                        child: Text("Бэлэн"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: "Данс",
-                                        child: Text("Данс"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Хойшлуулсан',
-                                        child: Text("Хойшлуулсан"),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Цуцлагдсан',
-                                        child: Text("Цуцлагдсан"),
-                                      )
-                                    ],
-                                    onChanged: (value) {
-                                      status = value.toString();
-                                      id = order.id;
-                                      setState(() {});
-                                      if (status == 'Хойшлуулсан') {
-                                        print("object");
-                                        _addComment(id: id);
-                                      }
-                                    })),
+                                DataCell(order.paymentStatus == null
+                                    ? DropdownButtonFormField(
+                                        validator: (value) {
+                                          if (value == null || value.toString().isEmpty) {
+                                            return "Хоосон байж болохгүй";
+                                          }
+                                          return null;
+                                        },
+                                        decoration: InputDecoration(border: InputBorder.none),
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          size: 35,
+                                          color: Colors.black,
+                                        ),
+                                        dropdownColor: Colors.white,
+                                        isExpanded: true,
+                                        style: TextStyle(color: Colors.black, fontSize: 16),
+                                        hint: Text(order.paymentStatus ?? "..."),
+                                        items: [
+                                          DropdownMenuItem(
+                                            value: "Бэлэн",
+                                            child: Text("Бэлэн"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: "Данс",
+                                            child: Text("Данс"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Хойшлуулсан',
+                                            child: Text("Хойшлуулсан"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'Цуцлагдсан',
+                                            child: Text("Цуцлагдсан"),
+                                          )
+                                        ],
+                                        onChanged: (value) {
+                                          status = value.toString();
+                                          id = order.id;
+                                          setState(() {});
+                                          if (status == 'Хойшлуулсан') {
+                                            print("object");
+                                            _addComment(id: id);
+                                          }
+                                        })
+                                    : Text("${order.paymentStatus}")),
                                 DataCell(
                                   Text(order.comment != null ? "${order.comment}" : ""),
                                 ),
                                 DataCell(
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      elevation: MaterialStateProperty.all(0),
-                                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                                    ),
-                                    onPressed: savebutton,
-                                    child: Text(
-                                      "Хадгалах",
-                                      style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
-                                    ),
-                                  ),
+                                  order.paymentStatus == null
+                                      ? ElevatedButton(
+                                          style: ButtonStyle(
+                                            elevation: MaterialStateProperty.all(0),
+                                            backgroundColor: MaterialStateProperty.all(Colors.white),
+                                            foregroundColor: MaterialStateProperty.all(Colors.black),
+                                          ),
+                                          onPressed: savebutton,
+                                          child: Text(
+                                            "Хадгалах",
+                                            style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
+                                          ),
+                                        )
+                                      : Container(),
                                 ),
                               ],
                             ),

@@ -20,7 +20,7 @@ class LoginPage extends StatefulWidget {
 enum Role { delivery, seller }
 
 class _LoginPageState extends State<LoginPage> {
-  Role? _role = Role.delivery;
+  Role? _role;
   Userinfo? data = Userinfo();
   final formKey = GlobalKey<FormState>();
   final loginName = TextEditingController();
@@ -36,23 +36,20 @@ class _LoginPageState extends State<LoginPage> {
       map['phone'] = loginName.text;
       map['password'] = loginpass.text;
       var response = await ApiManager.login(map, context);
-      if (response.role == 'seller' && isSeller) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: ((context) => HomePage()),
-          ),
-        );
-      } else if (isSeller == false || isDel == true) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
-      }
-
-      if (isDel && isSeller == false) {
+      if (response.role == role) {
+        if (response.role == 'seller') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: ((context) => HomePage()),
+            ),
+          );
+        }
         if (response.role == 'delivery') {
           Navigator.push(context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
-        } else if (isDel == false || isSeller == true) {
-          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
         }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
       }
     }
   }
@@ -104,14 +101,11 @@ class _LoginPageState extends State<LoginPage> {
                               onChanged: (Role? value) {
                                 setState(() {
                                   _role = value;
-                                  print("role:::${_role}");
                                   if (value == Role.seller) {
                                     isSeller = true;
+                                    role = 'seller';
+                                    print("role:::${role}");
                                   }
-                                  if (isDel) {
-                                    isDel = false;
-                                  }
-                                  print("seller:::${isSeller}");
                                 });
                               },
                             ),
@@ -134,16 +128,10 @@ class _LoginPageState extends State<LoginPage> {
                               onChanged: (Role? value) {
                                 setState(() {
                                   _role = value;
-                                  if (isSeller) {
-                                    isSeller = false;
-                                  }
                                   if (value == Role.delivery) {
-                                    isDel = true;
+                                    role = 'delivery';
+                                    print("role:::${role}");
                                   }
-                                  isDel = true;
-                                  print("role:::${isSeller}");
-
-                                  print("role:::${isDel}");
                                 });
                               },
                             ),
