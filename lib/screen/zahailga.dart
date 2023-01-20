@@ -282,23 +282,23 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                           await checkProdStock();
                         }),
                   ),
-                  prodQty != null
-                      ? Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Боломжит үлдэгдэл: ${prodQty}",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        )
-                      : Container(),
-                  prodQty != null
-                      ? SizedBox(
-                          height: 10,
-                        )
-                      : Container(),
+                  // prodQty != null
+                  //     ? Padding(
+                  //         padding: EdgeInsets.only(left: 10),
+                  //         child: Align(
+                  //           alignment: Alignment.centerLeft,
+                  //           child: Text(
+                  //             "Боломжит үлдэгдэл: ${prodQty}",
+                  //             style: TextStyle(color: Colors.red),
+                  //           ),
+                  //         ),
+                  //       )
+                  //     : Container(),
+                  // prodQty != null
+                  //     ? SizedBox(
+                  //         height: 10,
+                  //       )
+                  //     : Container(),
 
                   // Phone no
                   Container(

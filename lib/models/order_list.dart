@@ -27,7 +27,7 @@ class OrderList {
 class Order {
   int? id;
   int? productId;
-  Null? userId;
+  int? userId;
   int? deliverId;
   int? sellerId;
   int? productQty;
@@ -39,6 +39,7 @@ class Order {
   String? orderDate;
   String? procurementDate;
   String? deliveryDate;
+  String? delivered_date;
   String? orderStatus;
   String? paymentStatus;
   int? orderType;
@@ -88,6 +89,7 @@ class Order {
     orderDate = json['order_date'];
     procurementDate = json['procurement_date'];
     deliveryDate = json['delivery_date'];
+    delivered_date = json['delivered_date'];
     orderStatus = json['order_status'];
     paymentStatus = json['payment_status'];
     orderType = json['order_type'];
