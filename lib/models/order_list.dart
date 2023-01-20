@@ -34,6 +34,7 @@ class Order {
   String? ownerName;
   String? ownerPhone;
   String? ownerAddress;
+  String? owner_email;
   String? orderDate;
   String? procurementDate;
   String? deliveryDate;
@@ -56,6 +57,7 @@ class Order {
       this.ownerName,
       this.ownerPhone,
       this.ownerAddress,
+      this.owner_email,
       this.orderDate,
       this.procurementDate,
       this.deliveryDate,
@@ -79,6 +81,7 @@ class Order {
     ownerName = json['owner_name'];
     ownerPhone = json['owner_phone'];
     ownerAddress = json['owner_address'];
+    owner_email = json['owner_email'];
     orderDate = json['order_date'];
     procurementDate = json['procurement_date'];
     deliveryDate = json['delivery_date'];

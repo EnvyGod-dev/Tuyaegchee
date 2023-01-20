@@ -9,6 +9,7 @@ import 'package:lapp/screen/login.dart';
 import 'package:intl/intl.dart';
 import 'package:lapp/service/responsive_flutter.dart';
 import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeliveryPage extends StatefulWidget {
@@ -19,6 +20,8 @@ class DeliveryPage extends StatefulWidget {
 }
 
 class _DeliveryPageState extends State<DeliveryPage> {
+  var _refreshController = RefreshController(initialRefresh: false);
+
   // Userinfo? data = Userinfo();
   DateTime? dateTime = DateTime.now();
   DateTime date = DateTime.now();
@@ -84,6 +87,29 @@ class _DeliveryPageState extends State<DeliveryPage> {
     print("res::::${res}");
   }
 
+  void _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    if (date != DateTime.now()) {
+      var map = new Map<String, dynamic>();
+      map['order_date'] = DateFormat('yyyy-MM-dd').format(date);
+      var res = await ApiManager.getOrderListByDate(map, context);
+      if (res.status == 'error') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Тухайн өдөрт захиалга байхгүй байна")));
+      }
+      orderList = res.result!;
+      setState(() {});
+    } else {
+      getOrderList();
+    }
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+
+    _refreshController.loadComplete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,272 +172,284 @@ class _DeliveryPageState extends State<DeliveryPage> {
         decoration: BoxDecoration(
           image: DecorationImage(image: AssetImage('images/back1.jpg'), fit: BoxFit.fitWidth),
         ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formkey,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 408.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Он сар",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+        child: SmartRefresher(
+          controller: _refreshController,
+          enablePullDown: true,
+          enablePullUp: false,
+          header: const WaterDropHeader(
+              complete: Icon(
+            Icons.check,
+            color: Colors.green,
+          )),
+          onRefresh: _onRefresh,
+          onLoading: _onLoading,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formkey,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 408.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                      onPressed: _onsar,
+                    Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        DateFormat('yyyy-MM-dd').format(dateTime!),
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10),
-                          ),
+                        "Он сар",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        columns: <DataColumn>[
-                          DataColumn(
-                            label: Text(
-                              "Б.Бренд",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: ElevatedButton(
+                        onPressed: _onsar,
+                        child: Text(
+                          DateFormat('yyyy-MM-dd').format(dateTime!),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
                             ),
                           ),
-                          DataColumn(
-                            label: Text(
-                              "Б.Нэр",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Т/ширхэг",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Б.үнэ",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "З.Дугаар",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "З.Нэр",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "З.мэйл",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "З.хаяг",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "З.Огноо",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Х.Огноо",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Төлбөр",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Тайлбар",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              "Үйлдэл",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                        rows: <DataRow>[
-                          for (var order in orderList)
-                            DataRow(
-                              cells: [
-                                DataCell(
-                                  Text("${order.product?.brandId}"),
+                          columns: <DataColumn>[
+                            DataColumn(
+                              label: Text(
+                                "Б.Бренд",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.product?.productName}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Б.Нэр",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.productQty}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Т/ширхэг",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.product?.productPrice}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Б.үнэ",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.seller?.phone}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "З.Дугаар",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.seller?.name}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "З.Нэр",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.seller?.email}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "З.мэйл",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text("${order.seller?.address}"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "З.хаяг",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "З.Огноо",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(
-                                  order.deliveryDate != null
-                                      ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.deliveryDate!)))
-                                      : Text(''),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Х.Огноо",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                DataCell(DropdownButtonFormField(
-                                    validator: (value) {
-                                      if (value == null || value.toString().isEmpty) {
-                                        return "Хоосон байж болохгүй";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(border: InputBorder.none),
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      size: 35,
-                                      color: Colors.black,
-                                    ),
-                                    dropdownColor: Colors.white,
-                                    isExpanded: true,
-                                    style: TextStyle(color: Colors.black, fontSize: 16),
-                                    hint: Text(order.paymentStatus ?? "..."),
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: "Бэлэн",
-                                        child: Text("Бэлэн"),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Төлбөр",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Тайлбар",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                "Үйлдэл",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                          rows: <DataRow>[
+                            for (var order in orderList)
+                              DataRow(
+                                cells: [
+                                  DataCell(
+                                    Text(order.product?.brandId != null ? "${order.product?.brandId}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.product?.productName != null ? "${order.product?.productName}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.product?.productQty != null ? "${order.productQty}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.product?.productPrice != null ? "${order.product?.productPrice}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.ownerPhone != null ? "${order.ownerPhone}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.ownerName != null ? "${order.ownerName}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.owner_email != null ? "${order.owner_email}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(order.ownerAddress != null ? "${order.ownerAddress}" : ''),
+                                  ),
+                                  DataCell(
+                                    Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),
+                                  ),
+                                  DataCell(
+                                    order.deliveryDate != null
+                                        ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.deliveryDate!)))
+                                        : Text(''),
+                                  ),
+                                  DataCell(DropdownButtonFormField(
+                                      validator: (value) {
+                                        if (value == null || value.toString().isEmpty) {
+                                          return "Хоосон байж болохгүй";
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(border: InputBorder.none),
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 35,
+                                        color: Colors.black,
                                       ),
-                                      DropdownMenuItem(
-                                        value: "Данс",
-                                        child: Text("Данс"),
+                                      dropdownColor: Colors.white,
+                                      isExpanded: true,
+                                      style: TextStyle(color: Colors.black, fontSize: 16),
+                                      hint: Text(order.paymentStatus ?? "..."),
+                                      items: [
+                                        DropdownMenuItem(
+                                          value: "Бэлэн",
+                                          child: Text("Бэлэн"),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: "Данс",
+                                          child: Text("Данс"),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Хойшлуулсан',
+                                          child: Text("Хойшлуулсан"),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'Цуцлагдсан',
+                                          child: Text("Цуцлагдсан"),
+                                        )
+                                      ],
+                                      onChanged: (value) {
+                                        status = value.toString();
+                                        id = order.id;
+                                        setState(() {});
+                                        if (status == 'Хойшлуулсан') {
+                                          print("object");
+                                          _addComment(id: id);
+                                        }
+                                      })),
+                                  DataCell(
+                                    Text(order.comment != null ? "${order.comment}" : ""),
+                                  ),
+                                  DataCell(
+                                    ElevatedButton(
+                                      style: ButtonStyle(
+                                        elevation: MaterialStateProperty.all(0),
+                                        backgroundColor: MaterialStateProperty.all(Colors.white),
+                                        foregroundColor: MaterialStateProperty.all(Colors.black),
                                       ),
-                                      DropdownMenuItem(
-                                        value: 'Хойшлуулсан',
-                                        child: Text("Хойшлуулсан"),
+                                      onPressed: savebutton,
+                                      child: Text(
+                                        "Хадгалах",
+                                        style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
                                       ),
-                                      DropdownMenuItem(
-                                        value: 'Цуцлагдсан',
-                                        child: Text("Цуцлагдсан"),
-                                      )
-                                    ],
-                                    onChanged: (value) {
-                                      status = value.toString();
-                                      id = order.id;
-                                      setState(() {});
-                                      if (status == 'Хойшлуулсан') {
-                                        print("object");
-                                        _addComment(id: id);
-                                      }
-                                    })),
-                                DataCell(
-                                  Text(order.comment != null ? "${order.comment}" : ""),
-                                ),
-                                DataCell(
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      elevation: MaterialStateProperty.all(0),
-                                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                                    ),
-                                    onPressed: savebutton,
-                                    child: Text(
-                                      "Хадгалах",
-                                      style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                        ]),
-                  ),
-                ],
+                                ],
+                              ),
+                          ]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

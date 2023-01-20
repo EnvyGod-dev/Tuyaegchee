@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         if (response.role == 'delivery') {
           Navigator.push(context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
         }
-      } else {
+      } else if (isDel == false && isSeller == true) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));
       }
     }

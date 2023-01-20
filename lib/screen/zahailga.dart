@@ -1,5 +1,4 @@
-import 'dart:ffi';
-
+// import 'dart:ffi';
 import 'package:flutter/services.dart';
 import 'package:lapp/api%20&%20bloc/api_controller.dart';
 import 'package:lapp/models/brand_list.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lapp/service/responsive_flutter.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ZahialgaPage extends StatefulWidget {
   final String? name;
