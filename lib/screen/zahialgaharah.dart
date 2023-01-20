@@ -285,10 +285,10 @@ class _ProductSeeState extends State<ProductSee> {
                                   Text(order.product?.productName != null ? "${order.product?.productName}" : ''),
                                 ),
                                 DataCell(
-                                  Text(order.product?.productQty != null ? "${order.productQty}" : ''),
+                                  Text(order.productQty != null ? "${order.productQty}" : ''),
                                 ),
                                 DataCell(
-                                  Text(order.product?.productPrice != null ? "${order.product?.productPrice}" : ''),
+                                  Text(order.product_price != null ? "${order.product_price}" : ''),
                                 ),
                                 DataCell(
                                   Text(order.ownerPhone != null ? "${order.ownerPhone}" : ''),

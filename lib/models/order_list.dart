@@ -31,6 +31,7 @@ class Order {
   int? deliverId;
   int? sellerId;
   int? productQty;
+  int? product_price;
   String? ownerName;
   String? ownerPhone;
   String? ownerAddress;
@@ -54,6 +55,7 @@ class Order {
       this.deliverId,
       this.sellerId,
       this.productQty,
+      this.product_price,
       this.ownerName,
       this.ownerPhone,
       this.ownerAddress,
@@ -78,6 +80,7 @@ class Order {
     deliverId = json['deliver_id'];
     sellerId = json['seller_id'];
     productQty = json['product_qty'];
+    product_price = json['product_price'];
     ownerName = json['owner_name'];
     ownerPhone = json['owner_phone'];
     ownerAddress = json['owner_address'];

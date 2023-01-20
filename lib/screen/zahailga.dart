@@ -57,7 +57,6 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
       print("request::::${map}");
       var res = await ApiManager.orderCreate(map, context);
       print("response${res}");
-      // Navigator.push(context, MaterialPageRoute(builder: ((context) => HomePage())));
       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("амжилттай захиаллаа")));
     }
   }

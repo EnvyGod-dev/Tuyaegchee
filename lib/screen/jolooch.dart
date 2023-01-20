@@ -60,7 +60,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    // SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]).then((_) {});
 
     getOrderList();
     _getUserData();
@@ -85,6 +85,7 @@ class _DeliveryPageState extends State<DeliveryPage> {
     map['status'] = status;
     var res = await ApiManager.paymentStatusChange(map, id!, context);
     print("res::::${res}");
+    _onRefresh();
   }
 
   void _onRefresh() async {
@@ -358,10 +359,10 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     Text(order.product?.productName != null ? "${order.product?.productName}" : ''),
                                   ),
                                   DataCell(
-                                    Text(order.product?.productQty != null ? "${order.productQty}" : ''),
+                                    Text(order.productQty != null ? "${order.productQty}" : ''),
                                   ),
                                   DataCell(
-                                    Text(order.product?.productPrice != null ? "${order.product?.productPrice}" : ''),
+                                    Text(order.product_price != null ? "${order.product_price}" : ''),
                                   ),
                                   DataCell(
                                     Text(order.ownerPhone != null ? "${order.ownerPhone}" : ''),
@@ -431,18 +432,20 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     Text(order.comment != null ? "${order.comment}" : ""),
                                   ),
                                   DataCell(
-                                    ElevatedButton(
-                                      style: ButtonStyle(
-                                        elevation: MaterialStateProperty.all(0),
-                                        backgroundColor: MaterialStateProperty.all(Colors.white),
-                                        foregroundColor: MaterialStateProperty.all(Colors.black),
-                                      ),
-                                      onPressed: savebutton,
-                                      child: Text(
-                                        "Хадгалах",
-                                        style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
-                                      ),
-                                    ),
+                                    order.paymentStatus == null
+                                        ? ElevatedButton(
+                                            style: ButtonStyle(
+                                              elevation: MaterialStateProperty.all(0),
+                                              backgroundColor: MaterialStateProperty.all(Colors.white),
+                                              foregroundColor: MaterialStateProperty.all(Colors.black),
+                                            ),
+                                            onPressed: savebutton,
+                                            child: Text(
+                                              "Хадгалах",
+                                              style: TextStyle(color: Color.fromARGB(255, 15, 67, 42)),
+                                            ),
+                                          )
+                                        : Container(),
                                   ),
                                 ],
                               ),

@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:lapp/models/order_list.dart';
 import 'package:lapp/models/product_list.dart';
 import 'package:lapp/models/userInfo.dart';
+import 'package:lapp/screen/vndsen.dart';
 import 'package:lapp/widgets/alert_dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:dio/dio.dart';
@@ -128,7 +129,7 @@ class ApiManager {
     );
     var res = jsonDecode(response.body);
     if (res['status'] == 'success') {
-      WarningAlert().showDialog(context: context, text: 'Захиалга амжилттай.');
+      WarningAlert().showDialog(context: context, text: 'Захиалга амжилттай.', screen: HomePage());
       return true;
     } else if (res['status'] == "error") {
       if (res['errors'] != null) {
