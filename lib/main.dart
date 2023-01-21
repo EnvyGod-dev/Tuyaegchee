@@ -1,4 +1,4 @@
-import 'package:lapp/screen/login.dart';
+import 'package:baekseolmtx/screen/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {

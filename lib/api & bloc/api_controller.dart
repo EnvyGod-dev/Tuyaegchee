@@ -1,17 +1,19 @@
 import 'dart:convert';
 
+import 'package:baekseolmtx/models/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:lapp/api%20&%20bloc/api_helper.dart';
-import 'package:lapp/models/brand_list.dart';
-import 'package:lapp/models/login.dart';
+import 'package:baekseolmtx/api%20&%20bloc/api_helper.dart';
+import 'package:baekseolmtx/models/brand_list.dart';
+import 'package:baekseolmtx/models/login.dart';
 import 'package:http/http.dart' as http;
-import 'package:lapp/models/order_list.dart';
-import 'package:lapp/models/product_list.dart';
-import 'package:lapp/models/userInfo.dart';
-import 'package:lapp/screen/vndsen.dart';
-import 'package:lapp/screen/vndsen.dart';
-import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:baekseolmtx/models/order_list.dart';
+import 'package:baekseolmtx/models/product_list.dart';
+import 'package:baekseolmtx/models/userInfo.dart';
+import 'package:baekseolmtx/screen/hereglegch.dart';
+import 'package:baekseolmtx/screen/vndsen.dart';
+import 'package:baekseolmtx/screen/vndsen.dart';
+import 'package:baekseolmtx/widgets/alert_dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:dio/dio.dart';
 
@@ -199,7 +201,7 @@ class ApiManager {
       var resp = Userinfo.fromJson(jsonDecode(response.body));
       return resp;
     } else if (res['status'] == "success") {
-      WarningAlert().showDialog(context: context, text: "Хэрэглэгч бүртгэлгүй байна. Бүртгүүлнэ үү");
+      WarningAlert().showDialog(context: context, text: "Хэрэглэгч бүртгэлгүй байна. Бүртгүүлнэ үү", screen: UserCreate());
     }
   }
 

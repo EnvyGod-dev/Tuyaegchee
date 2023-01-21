@@ -1,13 +1,13 @@
 import 'package:flutter/services.dart';
-import 'package:lapp/api%20&%20bloc/api_controller.dart';
-import 'package:lapp/models/userInfo.dart';
-import 'package:lapp/screen/vndsen.dart';
+import 'package:baekseolmtx/api%20&%20bloc/api_controller.dart';
+import 'package:baekseolmtx/models/userInfo.dart';
+import 'package:baekseolmtx/screen/vndsen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lapp/service/responsive_flutter.dart';
-import 'package:lapp/widgets/text_form_field.dart';
+import 'package:baekseolmtx/service/responsive_flutter.dart';
+import 'package:baekseolmtx/widgets/text_form_field.dart';
 
 class UserCreate extends StatefulWidget {
   final String? name;
@@ -24,17 +24,21 @@ class _UserCreateState extends State<UserCreate> {
   final _ner = TextEditingController();
   final _email = TextEditingController();
   final _gerinhayg = TextEditingController();
+  String? userName;
+  var res;
+  getUserData() async {
+    res = await ApiManager.getUserData();
+    print("res:::${res.result?.name}");
+    userName = res.result?.name;
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsFlutterBinding.ensureInitialized();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {});
-    _getUserData();
-  }
-
-  _getUserData() async {
-    var data = await ApiManager.getUserData();
-    setState(() {});
+    getUserData();
   }
 
   _burtgeh() async {
@@ -71,7 +75,7 @@ class _UserCreateState extends State<UserCreate> {
                   Padding(
                     padding: const EdgeInsets.only(right: 78.0),
                     child: Text(
-                      "${widget.name}",
+                      '${userName ?? ''}',
                       style: TextStyle(
                         backgroundColor: Color.fromARGB(255, 253, 255, 217),
                         color: Colors.black,

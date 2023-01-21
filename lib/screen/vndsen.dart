@@ -1,14 +1,14 @@
-import 'package:lapp/api%20&%20bloc/api_controller.dart';
-import 'package:lapp/screen/hereglegch.dart';
-import 'package:lapp/screen/login.dart';
-import 'package:lapp/screen/zahailga.dart';
-import 'package:lapp/screen/zahialgaharah.dart';
+import 'package:baekseolmtx/api%20&%20bloc/api_controller.dart';
+import 'package:baekseolmtx/screen/hereglegch.dart';
+import 'package:baekseolmtx/screen/login.dart';
+import 'package:baekseolmtx/screen/zahailga.dart';
+import 'package:baekseolmtx/screen/zahialgaharah.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:baekseolmtx/widgets/alert_dialogs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {

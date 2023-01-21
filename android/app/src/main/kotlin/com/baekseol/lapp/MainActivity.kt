@@ -1,4 +1,4 @@
-package com.baekseol.lapp
+package com.baekseolmtx.lapp
 
 import io.flutter.embedding.android.FlutterActivity
 

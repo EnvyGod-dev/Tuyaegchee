@@ -1,14 +1,14 @@
-import 'package:lapp/models/userInfo.dart';
-import 'package:lapp/screen/jolooch.dart';
-import 'package:lapp/screen/vndsen.dart';
+import 'package:baekseolmtx/models/userInfo.dart';
+import 'package:baekseolmtx/screen/jolooch.dart';
+import 'package:baekseolmtx/screen/vndsen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:lapp/api & bloc/api_controller.dart';
-import 'package:lapp/service/responsive_flutter.dart';
-import 'package:lapp/widgets/alert_dialogs.dart';
+import 'package:baekseolmtx/api & bloc/api_controller.dart';
+import 'package:baekseolmtx/service/responsive_flutter.dart';
+import 'package:baekseolmtx/widgets/alert_dialogs.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
