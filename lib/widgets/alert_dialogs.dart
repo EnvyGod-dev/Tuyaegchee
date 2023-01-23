@@ -4,8 +4,15 @@ import 'package:baekseolmtx/screen/login.dart';
 
 class WarningAlert {
   late int year;
-  void showDialog(
-      {required BuildContext context, String text = '', String? button2Text, String? button1Text, bool isNavigate = false, Widget? screen}) {
+  void showDialog({
+    required BuildContext context,
+    String text = '',
+    String? button2Text,
+    String? button1Text,
+    bool isNavigate = false,
+    Widget? screen,
+    Function()? onPressed,
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -28,11 +35,17 @@ class WarningAlert {
                 button2Text ?? 'Болсон',
                 style: TextStyle(color: Colors.black),
               ),
-              onPressed: () {
-                screen != null
-                    ? Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => screen), (Route<dynamic> route) => false)
-                    : Navigator.of(context).pop();
-              },
+              onPressed: onPressed ??
+                  () {
+                    screen != null
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => screen,
+                            ),
+                          )
+                        : Navigator.of(context).pop();
+                  },
             ),
             isNavigate
                 ? ElevatedButton(

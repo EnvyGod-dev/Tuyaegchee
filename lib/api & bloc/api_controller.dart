@@ -84,10 +84,11 @@ class ApiManager {
     var res = jsonDecode(response.body);
     if (res['status'] == 'success') {
       WarningAlert().showDialog(
-        context: context,
-        text: 'Хэрэглэгч амжилттай бүртгэлээ',
-        screen: HomePage(),
-      );
+          context: context,
+          text: 'Хэрэглэгч амжилттай бүртгэлээ',
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false);
+          });
       return true;
     } else if (res['status'] == "error") {
       if (res['errors'] != null) {
@@ -139,7 +140,12 @@ class ApiManager {
     );
     var res = jsonDecode(response.body);
     if (res['status'] == 'success') {
-      WarningAlert().showDialog(context: context, text: 'Захиалга амжилттай.', screen: HomePage());
+      WarningAlert().showDialog(
+          context: context,
+          text: 'Захиалга амжилттай.',
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false);
+          });
       return true;
     } else if (res['status'] == "error") {
       if (res['errors'] != null) {
@@ -201,7 +207,11 @@ class ApiManager {
       var resp = Userinfo.fromJson(jsonDecode(response.body));
       return resp;
     } else if (res['status'] == "success") {
-      WarningAlert().showDialog(context: context, text: "Хэрэглэгч бүртгэлгүй байна. Бүртгүүлнэ үү", screen: UserCreate());
+      WarningAlert().showDialog(
+        context: context,
+        text: "Хэрэглэгч бүртгэлгүй байна. Бүртгүүлнэ үү",
+        screen: UserCreate(),
+      );
     }
   }
 
