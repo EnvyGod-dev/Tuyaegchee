@@ -49,10 +49,6 @@ class _ProductSeeState extends State<ProductSee> {
     setState(() {});
   }
 
-  void _onBackButton() {
-    Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));
-  }
-
   getOrderList() async {
     var res = await ApiManager.getOrderList();
     print("object:::::::${res.result}");
@@ -125,7 +121,8 @@ class _ProductSeeState extends State<ProductSee> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.pop(context);
+            // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false);
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,

@@ -97,7 +97,8 @@ class _UserCreateState extends State<UserCreate> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.pop(context);
+            // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false);
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,

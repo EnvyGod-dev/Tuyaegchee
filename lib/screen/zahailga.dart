@@ -143,7 +143,7 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
             elevation: MaterialStatePropertyAll<double>(0),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.pop(context);
           },
           child: FaIcon(
             FontAwesomeIcons.arrowLeft,
@@ -278,8 +278,8 @@ class _ZahialgaPageState extends State<ZahialgaPage> {
                         ),
                         keyboardType: TextInputType.number,
                         maxLength: 4,
-                        onEditingComplete: () async {
-                          await checkProdStock();
+                        onChanged: (value) async {
+                          int.parse(value) > prodQty! ? await checkProdStock() : null;
                         }),
                   ),
                   // prodQty != null

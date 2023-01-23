@@ -38,15 +38,10 @@ class _LoginPageState extends State<LoginPage> {
       var response = await ApiManager.login(map, context);
       if (response.role == role) {
         if (response.role == 'seller') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: ((context) => HomePage()),
-            ),
-          );
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (Route<dynamic> route) => false);
         }
         if (response.role == 'delivery') {
-          Navigator.push(context, MaterialPageRoute(builder: ((context) => DeliveryPage())));
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => DeliveryPage()), (Route<dynamic> route) => false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Нэвтрэх эрхээ зөв сонгоно уу")));

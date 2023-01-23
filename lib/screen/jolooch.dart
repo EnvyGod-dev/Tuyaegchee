@@ -380,8 +380,8 @@ class _DeliveryPageState extends State<DeliveryPage> {
                                     Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.createdAt!))),
                                   ),
                                   DataCell(
-                                    order.deliveryDate != null
-                                        ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(order.deliveryDate!)))
+                                    order.delivered_date != null
+                                        ? Text(DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse('${order.delivered_date}')))
                                         : Text(''),
                                   ),
                                   DataCell(DropdownButtonFormField(

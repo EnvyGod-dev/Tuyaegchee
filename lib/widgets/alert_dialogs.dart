@@ -30,12 +30,7 @@ class WarningAlert {
               ),
               onPressed: () {
                 screen != null
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => screen,
-                        ),
-                      )
+                    ? Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => screen), (Route<dynamic> route) => false)
                     : Navigator.of(context).pop();
               },
             ),
@@ -50,12 +45,7 @@ class WarningAlert {
                       style: TextStyle(color: Colors.black),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ),
-                      );
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false);
                     })
                 : Container(),
           ],
