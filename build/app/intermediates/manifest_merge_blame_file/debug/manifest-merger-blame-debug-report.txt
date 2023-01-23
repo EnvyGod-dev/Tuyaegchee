@@ -2,7 +2,7 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.baekseolmtx.lapp"
 4    android:versionCode="1"
-5    android:versionName="1.0.0" > <!-- Add this -->
+5    android:versionName="2.0.0" > <!-- Add this -->
 6    <uses-sdk
 7        android:minSdkVersion="16"
 8        android:targetSdkVersion="31" />
@@ -21,7 +21,7 @@
 18-->[androidx.core:core:1.6.0] /Users/munkhbat/.gradle/caches/transforms-3/acbce933e4b464a5224ed377a62db1f5/transformed/core-1.6.0/AndroidManifest.xml:24:18-86
 19        android:debuggable="true"
 20        android:icon="@mipmap/ic_launcher"
-21        android:label="lapp"
+21        android:label="baekseolmtx"
 22        android:testOnly="true" >
 23        <activity
 24            android:name="com.baekseolmtx.lapp.MainActivity"

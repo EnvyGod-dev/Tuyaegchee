@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.baekseolmtx.lapp"
     android:versionCode="1"
-    android:versionName="1.0.0" > <!-- Add this -->
+    android:versionName="2.0.0" > <!-- Add this -->
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="31" />
@@ -18,7 +18,7 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="lapp"
+        android:label="baekseolmtx"
         android:testOnly="true" >
         <activity
             android:name="com.baekseolmtx.lapp.MainActivity"

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.baekseolmtx.lapp">
    <application
-        android:label="lapp"
+        android:label="baekseolmtx"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
